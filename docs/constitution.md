@@ -87,4 +87,19 @@ Princípios que nenhuma task pode violar. Todo agente e todo humano lê este arq
 
 ## 4. Arquitetura
 
-A definir pelo ADR de camadas (task T-07). Até esta seção ser preenchida, nenhum código de regra de negócio novo entra no repositório.
+Definida pelo ADR-27 (`docs/adr/ADR-27-arquitetura-em-camadas.md`). Cada pasta nasce junto com o primeiro código que precisa dela.
+
+| Pasta | Responsabilidade | Pode importar |
+|---|---|---|
+| `src/dominio/` | Regras puras: tipos, máquina de estados, validações | Só arquivos do próprio `dominio/` |
+| `src/portas/` | Interfaces que os casos de uso usam (ex.: repositório, notificador, relógio) | `dominio/` |
+| `src/casos-de-uso/` | Lógica da aplicação; a mesma função atende webapp e bot | `dominio/` e `portas/` |
+| `src/infra/` | Implementações das portas (Supabase, Telegram) | `dominio/`, `portas/` e bibliotecas externas |
+| `src/lib/` | Temporária: tratada como `infra/` até ser movida (refactor depois da T-05) | Igual a `infra/` |
+| `src/app/` | Páginas e rotas de API: traduzem a entrada, montam as implementações e chamam um caso de uso | Todas as camadas |
+
+| ID | Regra | Verificação | Situação |
+|---|---|---|---|
+| ARQ-01 | `dominio/`, `portas/` e `casos-de-uso/` não importam `app/`, `infra/`, `lib/` nem bibliotecas de infraestrutura (`@supabase/*`, `next`, `server-only`, `react`, `react-dom`, `node:*`). `dominio/` também não importa `portas/` nem `casos-de-uso/`; `portas/` não importa `casos-de-uso/`. | ESLint `no-restricted-imports` no CI | Em vigor |
+| ARQ-02 | `infra/` e `lib/` não importam `app/` nem `casos-de-uso/`. | ESLint `no-restricted-imports` no CI | Em vigor |
+| ARQ-03 | Rotas de API e o webhook do bot não contêm regra de negócio: traduzem a entrada e chamam um caso de uso. | Revisão do PR | Em vigor |
