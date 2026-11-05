@@ -28,10 +28,10 @@ Princípios que nenhuma task pode violar. Todo agente e todo humano lê este arq
 - **Situação:** Prevista.
 
 ### P-03 — Isolamento por comunidade no banco (RLS), por vínculo ativo
-- **Regra:** toda leitura e escrita de dado de uma comunidade checa, no banco, se o usuário tem vínculo ativo naquela comunidade, mesmo que a API já tenha checado. Um usuário pode estar em várias comunidades: nunca assumir "a comunidade do usuário". Toda tabela nova nasce, na mesma migration, com RLS ligado, `grant` explícito só para os papéis que a usam e as políticas RLS.
-- **Porquê:** é a última barreira se a API falhar (RNF06). O projeto Supabase não expõe tabelas novas sozinho (ADR-18).
-- **Verificação:** testes de integração das políticas (usuário de outra comunidade e vínculo suspenso não leem nem gravam). Revisão de toda migration: RLS, `grant` e políticas presentes.
-- **Situação:** revisão de migrations Em vigor (`keep_alive`: RLS ligado, sem acesso para `anon` e `authenticated`). Testes de integração: Previstos.
+- **Regra:** toda leitura e escrita de dado de uma comunidade checa, no banco, se o usuário tem vínculo ativo naquela comunidade, mesmo que a API já tenha checado. Um usuário pode estar em várias comunidades: nunca assumir "a comunidade do usuário". Toda tabela nova nasce, na mesma migration, com RLS ligado, `revoke all` de `anon`, `authenticated` e `service_role`, depois `grant` só do que cada papel usa, e política RLS para cada papel sujeito ao RLS (`anon`, `authenticated`) que receba `grant`. Tabela usada só pelo `service_role` fica sem política: com o RLS ligado, os outros papéis não acessam nada (ADR-31).
+- **Porquê:** é a última barreira se a API falhar (RNF06). O projeto Supabase não expõe tabelas novas sozinho (ADR-18), mas os privilégios padrão do schema `public` dão ao `service_role` privilégios que ninguém pediu, e esse papel ignora o RLS (ADR-31).
+- **Verificação:** testes de integração das políticas (usuário de outra comunidade e vínculo suspenso ou removido não leem nem gravam). Revisão de toda migration: RLS, `revoke all` e `grant` presentes, e política para cada papel sujeito ao RLS que tenha `grant`. Depois de aplicar a migration: conferir em `information_schema.role_table_grants` que cada papel tem só os privilégios do `grant`, e testar o acesso com `set local role` dentro de `begin ... rollback` (ADR-31).
+- **Situação:** revisão de migrations e conferência de privilégios Em vigor: `telegram_updates` no padrão (`service_role` só com `insert`; sem política, porque nenhum papel sujeito ao RLS tem `grant`); `keep_alive` fora do padrão, criada antes do ADR-31 (`service_role` com privilégios além do que a rota usa; Issue #19). Testes de integração das políticas: Previstos.
 
 ### P-04 — Privacidade progressiva
 - **Regra:** a unidade e o telefone do solicitante só saem do banco para o apoiador que aceitou aquela solicitação. Nunca aparecem em listagens.
@@ -40,9 +40,9 @@ Princípios que nenhuma task pode violar. Todo agente e todo humano lê este arq
 - **Situação:** Prevista.
 
 ### P-05 — O bot só age sobre usuário identificado
-- **Regra:** o chat do Telegram que enviou a mensagem precisa estar vinculado a um usuário ativo, com vínculo ativo na comunidade da solicitação. Se não casar, nenhuma ação é executada. "Ação" é ler ou alterar dados do EntreNós. As únicas respostas permitidas a um chat não vinculado são as instruções de como conectar a conta e o próprio fluxo de conexão (RF23).
-- **Porquê:** o bot é uma porta de entrada para o banco.
-- **Verificação:** testes unitários do webhook: chat não vinculado, usuário inativo e vínculo de outra comunidade não chamam nenhum caso de uso (Mock sem chamadas).
+- **Regra:** o chat do Telegram que enviou a mensagem precisa estar vinculado a um usuário, e esse usuário precisa ter vínculo ativo na comunidade da solicitação (MD-05, ADR-32). Se não casar, nenhuma ação é executada. "Ação" é ler ou alterar dados do EntreNós. As únicas respostas permitidas a um chat não vinculado são as instruções de como conectar a conta e o próprio fluxo de conexão (RF23).
+- **Porquê:** o bot é uma porta de entrada para o banco. O usuário não tem status próprio: quem fica ativo, suspenso ou removido é o vínculo, em cada comunidade (MD-05).
+- **Verificação:** testes unitários do webhook: chat não vinculado, vínculo suspenso ou removido na comunidade da solicitação e vínculo só em outra comunidade não chamam nenhum caso de uso (Mock sem chamadas).
 - **Situação:** Prevista. ⚠️ O mecanismo de conexão (RF23) ainda será decidido.
 
 ### P-06 — Webhook confiável e idempotente
@@ -51,10 +51,10 @@ Princípios que nenhuma task pode violar. Todo agente e todo humano lê este arq
 - **Verificação:** testes unitários (cabeçalho ausente, cabeçalho errado, `update_id` repetido). Tempo constante: revisão de código, como na RNF-KA-01.
 - **Situação:** Prevista.
 
-### P-07 — Comunidade não aprovada e usuário suspenso não operam
-- **Regra:** comunidade Pendente ou Reprovada não aceita membros nem solicitações. Usuário suspenso não cria nem aceita solicitações. Convite é de uso único, vale 7 dias e é consumido numa operação atômica.
-- **Porquê:** são as regras de entrada que sustentam a confiança da rede.
-- **Verificação:** testes unitários (status da comunidade, suspensão, convite expirado, usado ou revogado, com relógio controlado). Teste de integração para o consumo atômico do convite.
+### P-07 — Comunidade não aprovada e vínculo não ativo não operam
+- **Regra:** comunidade Pendente ou Reprovada não aceita membros nem solicitações. Só quem tem vínculo ativo numa comunidade cria ou aceita solicitações nela: vínculo suspenso ou removido bloqueia só naquela comunidade, e a pessoa continua operando nas outras em que tem vínculo ativo (MD-05, ADR-32). Convite é de uso único, vale 7 dias e é consumido numa operação atômica.
+- **Porquê:** são as regras de entrada que sustentam a confiança da rede. Quem suspende é o admin de uma comunidade, que só tem poder sobre ela (RF17).
+- **Verificação:** testes unitários (status da comunidade; vínculo suspenso e vínculo removido; vínculo suspenso na comunidade A e ativo na B, bloqueado na A e liberado na B; convite expirado, usado ou revogado, com relógio controlado). Teste de integração para o consumo atômico do convite.
 - **Situação:** Prevista.
 
 ### P-08 — Segredos só no servidor
