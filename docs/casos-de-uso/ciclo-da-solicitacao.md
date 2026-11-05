@@ -125,7 +125,7 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 - Sucesso: existe uma solicitação Aberta nessa comunidade, sem apoiador, e os moradores escolhidos pela DC-01 foram avisados.
 - Exceção: nada foi criado e ninguém foi avisado.
 
-**Rastreabilidade (acréscimo do projeto):** RF04, RF05, RF06, RF07, RF22 · RC-01, RC-06, RC-09, RC-10 · P-03, P-04, P-07 · DC-01, DC-06.
+**Rastreabilidade (acréscimo do projeto):** RF04, RF05, RF06, RF07, RF22, RNF01 (RNF-US-01 em `docs/specs/usabilidade.md`) · RC-01, RC-06, RC-09, RC-10 · P-03, P-04, P-07 · DC-01, DC-06.
 
 ---
 
@@ -145,13 +145,16 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 1. O morador abre a lista de solicitações abertas da comunidade. A lista não mostra unidade nem telefone de ninguém (RC-10).
 2. Ele escolhe uma solicitação.
 3. Ele toca em **Aceitar**.
-4. O sistema muda a solicitação para **Aceita**, com esse morador como apoiador, e registra uma Transição da solicitação (de Aberta para Aceita, autor, origem webapp, data).
-5. O sistema avisa o solicitante.
-6. O sistema passa a mostrar ao apoiador a unidade e o telefone do solicitante (P-04).
+4. O sistema pede uma confirmação e avisa que, ao confirmar, ele passa a ver a unidade e o telefone do solicitante (RF-US-01).
+5. Ele confirma.
+6. O sistema muda a solicitação para **Aceita**, com esse morador como apoiador, e registra uma Transição da solicitação (de Aberta para Aceita, autor, origem webapp, data).
+7. O sistema avisa o solicitante.
+8. O sistema passa a mostrar ao apoiador a unidade e o telefone do solicitante (P-04).
 
 **Fluxos alternativos:**
-- **A1 — Pelo bot.** O morador recebeu o aviso do UC-01 (passo 6) e toca em **Aceitar** na mensagem. O sistema executa os passos 4 a 6, com origem bot, e responde no chat com a unidade e o telefone do solicitante.
+- **A1 — Pelo bot.** O morador recebeu o aviso do UC-01 (passo 6) e toca em **Aceitar** na mensagem. O bot pede a mesma confirmação na própria mensagem e ele confirma (passos 4 e 5). O sistema executa os passos 6 a 8, com origem bot, e responde no chat com a unidade e o telefone do solicitante.
 - **A2 — Filtro por categoria.** No passo 1, o morador filtra a lista por categoria (RF06).
+- **A3 — Desiste na confirmação.** No passo 5, o morador não confirma: no webapp, toca em Voltar ou sai da tela; no bot, toca em Voltar ou não toca em Confirmar. Nada muda, e a unidade e o telefone do solicitante continuam ocultos (RF-US-02).
 
 **Exceções:**
 - **E1 — Outro morador aceitou antes**, mesmo que no mesmo instante e por outro canal (webapp ou bot). Só a primeira aceitação vale. O sistema recusa a segunda, informa que a solicitação já foi aceita, e nada muda (P-01, RF09).
@@ -160,12 +163,14 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 - **E4 — O morador é o próprio solicitante.** O sistema recusa (RC-02).
 - **E5 — Vínculo não está ativo** (suspenso ou removido) na comunidade da solicitação. O sistema recusa (P-07).
 - **EB-1 e EB-2** (seção 1), no fluxo A1.
+- As exceções E1 a E5 e, no fluxo A1, as exceções EB-1 e EB-2 são conferidas quando o morador confirma (passo 5), porque a situação pode mudar entre o toque em Aceitar e a confirmação.
 
 **Pós-condições:**
 - Sucesso: a solicitação está Aceita, tem exatamente um apoiador, a Transição foi registrada, o solicitante foi avisado e só o apoiador vê a unidade e o telefone do solicitante.
 - Exceção: nada mudou.
+- Desistência na confirmação (A3): nada mudou, e a unidade e o telefone do solicitante não foram revelados.
 
-**Rastreabilidade (acréscimo do projeto):** RF06, RF08, RF09, RNF01 (contar os toques nos mockups), RNF05 · RC-01, RC-02, RC-09, RC-10 · P-01, P-02, P-04, P-05, P-07 · DC-03, DC-06.
+**Rastreabilidade (acréscimo do projeto):** RF06, RF08, RF09, RNF01 (RNF-US-02; RF-US-01 e RF-US-02 em `docs/specs/usabilidade.md`), RNF05 · RC-01, RC-02, RC-09, RC-10 · P-01, P-02, P-04, P-05, P-07 · DC-03, DC-06.
 
 ---
 
