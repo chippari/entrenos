@@ -47,12 +47,12 @@
 | Cláusula | Como verificar |
 |---|---|
 | RF-TW-01, 05, 07, 08, 09, RB-TW-01, RNF-TW-03 | Testes unitários do caso de uso, com Fake do registro e Mock do envio (T-09) |
-| RF-TW-01, 05 no banco real | Testes unitários da implementação do registro com dublê do cliente (T-10). A garantia de "uma vez só" vem da chave única no banco: ⚠️ verificada no teste ponta a ponta (T-13), não em teste unitário |
+| RF-TW-01, 05 no banco real | Testes unitários da implementação do registro com dublê do cliente (T-10). A garantia de "uma vez só" vem da chave única no banco: verificada no caso de teste manual CT-TW-03 (`docs/testes/webhook-telegram-manual.md`) |
 | RF-TW-07 (envio de fato), RNF-TW-02 (token) | Testes unitários da implementação do envio, com `fetch` simulado (T-11) |
 | RF-TW-02, 03, 04, 06, 10, RNF-TW-02, 05 | Testes unitários da rota, com dublê do caso de uso (T-12) |
 | RNF-TW-01 | Revisão de código, como na RNF-KA-01 (teste unitário não mede tempo) ⚠️ |
 | RNF-TW-04 | Revisão da migration (T-10) |
-| Todas | Caso de teste manual no celular, depois do `setWebhook` (T-13) |
+| Todas | Roteiro de teste manual `docs/testes/webhook-telegram-manual.md` (T-13) |
 
 ## Observações
 
