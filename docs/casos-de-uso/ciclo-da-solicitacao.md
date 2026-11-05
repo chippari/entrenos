@@ -12,6 +12,7 @@ Este arquivo descreve, do ponto de vista de quem usa, o ciclo de uma solicitaç�
 Convenções:
 
 - **O sistema** é o EntreNós. **O bot** é a parte do sistema que conversa pelo Telegram.
+- **Morador**, neste arquivo, é qualquer pessoa com vínculo ativo numa comunidade, seja qual for o papel no vínculo (morador ou admin). O admin também pede e oferece ajuda (DC-06).
 - **Webapp e bot executam o mesmo caso de uso.** Por isso o bot aparece como fluxo alternativo, e não como caso de uso próprio (P-02).
 - **Avisar** quer dizer mandar uma mensagem pelo canal de aviso da pessoa (RC-09): pelo Telegram, se ela o conectou; senão por e-mail, se ela aceita avisos por e-mail (RF24, ainda não especificado); senão ela vê a novidade só no webapp.
 - **Exceções** são numeradas (E1, E2...). Cada uma vai virar uma cláusula IF/THEN na spec, e cada fluxo vai virar teste (A5 s.27).
@@ -24,7 +25,7 @@ Convenções:
 
 | Ator | Quem é |
 |---|---|
-| **Morador** | Pessoa com vínculo ativo numa comunidade. Em cada solicitação, ele faz um dos dois papéis abaixo. |
+| **Morador** | Pessoa com vínculo ativo numa comunidade, com qualquer papel no vínculo (morador ou admin; DC-06). Em cada solicitação, ela faz um dos dois papéis abaixo. |
 | **Solicitante** | Morador que cria a solicitação. Só ele cancela e só ele conclui. |
 | **Apoiador** | Morador que aceita a solicitação. Só existe a partir da aceitação (RC-03). |
 | **Telegram** (ator secundário) | Sistema externo que entrega as mensagens do bot e os toques nos botões. A aula admite atores que são "coisas" (A5 s.12). |
@@ -65,7 +66,7 @@ UC04 --> Telegram
 UC05 --> Telegram
 ```
 
-Leitura: a seta com triângulo (Solicitante → Morador e Apoiador → Morador) é generalização: solicitante e apoiador são papéis de um morador. As outras linhas ligam cada ator aos casos de uso de que participa.
+Leitura: a seta com triângulo (Solicitante → Morador e Apoiador → Morador) é generalização: solicitante e apoiador são papéis de um morador. As outras linhas ligam cada ator aos casos de uso de que participa. O tipo `usecase-beta` do Mermaid ainda está em beta: o GitHub o desenhou em 05/11/2026, mas a sintaxe pode mudar.
 
 ## 4. Decisões de regra deste bloco
 
@@ -75,7 +76,8 @@ Leitura: a seta com triângulo (Solicitante → Morador e Apoiador → Morador) 
 | DC-02 | Quando o apoiador desiste, o sistema **avisa de novo** pelos critérios da DC-01, **sem avisar quem desistiu**. Se o horário já passou, não avisa. | A desistência costuma acontecer perto do horário; uma volta silenciosa à lista provavelmente não seria vista. Reaproveita a regra da DC-01. | Só voltar para a lista de abertas, sem aviso. |
 | DC-03 | Se o horário passou e ninguém aceitou, a solicitação **continua Aberta** (sem status novo), **sai da lista** de abertas, a **aceitação é recusada**, e o solicitante vê um rótulo e pode cancelar. | Não muda a máquina de estados (P-02). É uma regra de exibição e de aceitação. | (a) Status novo "Expirada". (b) Cancelamento automático. As duas mudam a P-02 (o sistema viraria um ator que muda status, e a Transição ganharia uma origem nova) e, enquanto a mudança automática não acontecesse, ainda precisariam desta mesma regra. |
 | DC-04 | Se a solicitação foi aceita e o solicitante não confirma a conclusão, ela **continua Aceita**. Depois do horário, o bot **pergunta uma vez** ao solicitante se a ajuda foi feita. O webapp mostra rótulos para os dois lados. **O sistema nunca conclui sozinho.** | Só o solicitante conclui (P-02, ADR-11). Uma pergunta basta para começar. | (a) Perguntar várias vezes: duas regras a mais (quantas vezes e quando parar) sem saber se fazem falta. (b) Concluir automaticamente: muda a P-02. |
-| DC-05 | Se o horário passou e ninguém aceitou, o bot **avisa o solicitante uma vez**, com um botão para cancelar. | Deixa claro que a solicitação acabou sem apoiador, sem tirar a decisão da pessoa (P-02). | (a) Cancelamento automático: muda a P-02. (b) Só o rótulo no webapp: quem não abre o webapp não fica sabendo. |
+| DC-05 | Se o horário passou e ninguém aceitou, o bot **avisa o solicitante uma vez**, com um botão para cancelar. Vale também quando o apoiador desiste depois do horário (UC-03, A2). | Deixa claro que a solicitação acabou sem apoiador, sem tirar a decisão da pessoa (P-02). | (a) Cancelamento automático: muda a P-02. (b) Só o rótulo no webapp: quem não abre o webapp não fica sabendo. |
+| DC-06 | O **admin da comunidade também cria e aceita solicitações**, como qualquer morador, desde que o vínculo dele esteja ativo. | O admin também mora na comunidade. O papel fica no Vínculo (MD-02), e proibir exigiria uma regra a mais. | O admin só administra e não pede nem oferece ajuda. |
 
 ## 5. Rótulos de exibição
 
@@ -105,7 +107,7 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 2. Ele informa título, descrição, categoria, data e horário.
 3. Ele confirma.
 4. O sistema confere os dados.
-5. O sistema cria a solicitação como **Aberta**, sem apoiador.
+5. O sistema cria a solicitação do tipo normal, como **Aberta**, sem apoiador.
 6. O sistema avisa os moradores escolhidos pela DC-01. O aviso traz título, categoria, data e horário, mas nunca a unidade nem o telefone do solicitante (RC-10). No Telegram, o aviso vem com o botão **Aceitar**.
 7. O sistema mostra a solicitação ao morador, com o status Aberta.
 
@@ -115,7 +117,7 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 **Exceções:**
 - **E1 — Dado obrigatório faltando.** O sistema não cria a solicitação e diz qual dado falta (RF05).
 - **E2 — Categoria fora das seis categorias fixas.** O sistema não cria a solicitação e diz o motivo (RF05).
-- **E3 — Data e horário já passaram.** O sistema não cria a solicitação e diz o motivo. ⚠️ Regra proposta neste documento: nenhum RF a cita, mas sem ela a solicitação nasceria vencida (DC-03).
+- **E3 — Data e horário já passaram.** O sistema não cria a solicitação e diz o motivo. Nenhum RF cita esta regra; ela entrou neste bloco porque, sem ela, a solicitação nasceria vencida (DC-03).
 - **E4 — Vínculo não está ativo** (suspenso ou removido) nessa comunidade. O sistema não cria a solicitação (P-07).
 - **E5 — Comunidade não está ativa** (pendente ou reprovada). O sistema não cria a solicitação (P-07, RC-06).
 
@@ -123,18 +125,18 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 - Sucesso: existe uma solicitação Aberta nessa comunidade, sem apoiador, e os moradores escolhidos pela DC-01 foram avisados.
 - Exceção: nada foi criado e ninguém foi avisado.
 
-**Rastreabilidade (acréscimo do projeto):** RF04, RF05, RF06, RF07, RF22 · RC-01, RC-06, RC-09, RC-10 · P-03, P-04, P-07 · DC-01.
+**Rastreabilidade (acréscimo do projeto):** RF04, RF05, RF06, RF07, RF22 · RC-01, RC-06, RC-09, RC-10 · P-03, P-04, P-07 · DC-01, DC-06.
 
 ---
 
 ### UC-02 — Aceitar solicitação
 
-**Ator:** apoiador. Ator secundário: Telegram.
+**Ator:** morador, que se torna apoiador ao aceitar. Ator secundário: Telegram.
 
 **Objetivo:** assumir uma ajuda pedida por um vizinho.
 
 **Pré-condições:**
-1. O morador está identificado: entrou no webapp ou usa um chat do Telegram conectado à conta dele (P-05).
+1. O morador entrou no webapp ou usa um chat do Telegram conectado à conta dele (no bot, P-05).
 2. Ele tem vínculo ativo na comunidade da solicitação (RC-01).
 3. A solicitação está Aberta e o horário dela ainda não passou (DC-03).
 4. Ele não é o solicitante (RC-02).
@@ -163,7 +165,7 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 - Sucesso: a solicitação está Aceita, tem exatamente um apoiador, a Transição foi registrada, o solicitante foi avisado e só o apoiador vê a unidade e o telefone do solicitante.
 - Exceção: nada mudou.
 
-**Rastreabilidade (acréscimo do projeto):** RF06, RF08, RF09, RNF01 (contar os toques nos mockups), RNF05 · RC-01, RC-02, RC-10 · P-01, P-02, P-04, P-05, P-07 · DC-03.
+**Rastreabilidade (acréscimo do projeto):** RF06, RF08, RF09, RNF01 (contar os toques nos mockups), RNF05 · RC-01, RC-02, RC-09, RC-10 · P-01, P-02, P-04, P-05, P-07 · DC-03, DC-06.
 
 ---
 
@@ -174,7 +176,7 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 **Objetivo:** devolver uma ajuda que ele aceitou e não vai poder fazer.
 
 **Pré-condições:**
-1. O morador está identificado (P-05).
+1. O morador entrou no webapp ou usa um chat do Telegram conectado à conta dele (no bot, P-05).
 2. A solicitação está Aceita e ele é o apoiador dela.
 
 **Fluxo principal (webapp):**
@@ -187,7 +189,7 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 
 **Fluxos alternativos:**
 - **A1 — Pelo bot.** O apoiador toca em **Desistir** numa mensagem do bot. O sistema executa os passos 3 a 6, com origem bot.
-- **A2 — O horário já passou.** No passo 5, ninguém é avisado de novo (DC-02). O solicitante passa a ver o rótulo "Horário passou, ninguém aceitou" (DC-03).
+- **A2 — O horário já passou.** No passo 5, ninguém é avisado de novo (DC-02). O solicitante passa a ver o rótulo "Horário passou, ninguém aceitou" (DC-03) e recebe o aviso da DC-05 (UC-04, A2).
 
 **Exceções:**
 - **E1 — A solicitação não está mais Aceita** (o solicitante cancelou ou concluiu antes). O sistema recusa e informa o status atual (P-02).
@@ -198,7 +200,7 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 - Sucesso: a solicitação está Aberta, sem apoiador; a Transição foi registrada; o solicitante foi avisado; o ex-apoiador não vê mais a unidade e o telefone.
 - Exceção: nada mudou.
 
-**Rastreabilidade (acréscimo do projeto):** RF10 · RC-03, RC-10 · P-02, P-04, P-05 · DC-02, DC-03.
+**Rastreabilidade (acréscimo do projeto):** RF10 · RC-03, RC-09, RC-10 · P-02, P-04, P-05 · DC-02, DC-03, DC-05.
 
 ---
 
@@ -209,7 +211,7 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 **Objetivo:** desistir de uma ajuda que ele pediu.
 
 **Pré-condições:**
-1. O morador está identificado (P-05).
+1. O morador entrou no webapp ou usa um chat do Telegram conectado à conta dele (no bot, P-05).
 2. Ele é o solicitante.
 3. A solicitação está Aberta ou Aceita.
 
@@ -222,7 +224,7 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 **Fluxos alternativos:**
 - **A1 — Pelo bot.** O solicitante toca em **Cancelar** numa mensagem do bot. O sistema executa os passos 3 e 4, com origem bot.
 - **A2 — Aviso de horário vencido (DC-05).** O horário passou e ninguém aceitou. O bot avisa o solicitante uma vez, por exemplo: "Ninguém aceitou sua solicitação. Quer cancelar?" ⚠️, com o botão **Cancelar**. Se ele tocar, o sistema executa os passos 3 e 4, com origem bot. Se não tocar, a solicitação continua Aberta (DC-03), e o bot não avisa de novo.
-- **A3 — Rótulo no webapp (DC-03).** Na lista das próprias solicitações, o solicitante vê o rótulo "Horário passou, ninguém aceitou", com o botão **Cancelar** ao lado. Ao tocar, segue o fluxo principal a partir do passo 2.
+- **A3 — Rótulo no webapp (DC-03).** Na lista das próprias solicitações, o solicitante vê o rótulo "Horário passou, ninguém aceitou", com o botão **Cancelar** ao lado. Ao tocar, segue o fluxo principal a partir da confirmação do passo 2.
 - **A4 — Alguém aceitou enquanto o solicitante decidia.** A solicitação estava Aberta quando ele a abriu e ficou Aceita antes do toque em Cancelar. O cancelamento continua valendo, porque Aceita também pode ser cancelada, e o novo apoiador é avisado no passo 4.
 
 **Exceções:**
@@ -234,7 +236,7 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 - Sucesso: a solicitação está Cancelada e não muda mais; a Transição foi registrada; o apoiador, se havia, foi avisado.
 - Exceção: nada mudou.
 
-**Rastreabilidade (acréscimo do projeto):** RF10 · P-02, P-05 · DC-03, DC-05.
+**Rastreabilidade (acréscimo do projeto):** RF10 · RC-09 · P-02, P-05 · DC-03, DC-05.
 
 ---
 
@@ -245,7 +247,7 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 **Objetivo:** confirmar que a ajuda foi feita.
 
 **Pré-condições:**
-1. O morador está identificado (P-05).
+1. O morador entrou no webapp ou usa um chat do Telegram conectado à conta dele (no bot, P-05).
 2. Ele é o solicitante.
 3. A solicitação está Aceita.
 
@@ -272,7 +274,7 @@ Não existe avaliação entre moradores depois da conclusão (D-01, RC-11).
 - Sucesso: a solicitação está Concluída e não muda mais; a Transição foi registrada; o apoiador foi avisado.
 - Exceção: nada mudou.
 
-**Rastreabilidade (acréscimo do projeto):** RF11, RF12 · RC-11 · P-02, P-05 · D-01 · DC-04.
+**Rastreabilidade (acréscimo do projeto):** RF11, RF12 · RC-09, RC-11 · P-02, P-05 · D-01 · DC-04.
 
 ## 7. Pontos em aberto ⚠️
 
@@ -281,10 +283,9 @@ Não mudam os fluxos acima, mas precisam de resposta na spec ou nos mockups.
 - Textos exatos dos avisos, das perguntas do bot e dos rótulos (mockups e catálogo de mensagens).
 - Como o sistema sabe que já perguntou (DC-04) ou já avisou (DC-05), para fazer isso uma vez só. Talvez exija um dado novo na Solicitação, o que mexeria no modelo.
 - Quem não usa Telegram: a pergunta da DC-04 e o aviso da DC-05 também vão por e-mail, com um link para o webapp? (RF24)
-- UC-01, E3: confirmar a regra "não criar solicitação com data e horário já passados".
 - Vínculo suspenso ou removido depois de criar ou aceitar: a pessoa ainda pode cancelar, desistir ou concluir? (efeitos da suspensão, RF17)
 - Depois que a solicitação é Cancelada ou Concluída, o ex-apoiador continua vendo a unidade e o telefone do solicitante? (P-04)
 - O que o solicitante vê do apoiador quando é avisado da aceitação (nome? contato?).
 - O solicitante pode concluir antes do horário marcado, se a ajuda já aconteceu?
 - Texto da resposta do bot na EB-2.
-- O diagrama usa o tipo `usecase-beta` do Mermaid, que é recente e ainda está em beta. ⚠️ Conferir se o GitHub o desenha.
+- Na spec: onde fica a recusa por horário vencido. Proposta: como condição do caso de uso Aceitar, fora da tabela de transições da P-02.
