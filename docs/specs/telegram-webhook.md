@@ -9,7 +9,7 @@
 
 | ID | Regra |
 |---|---|
-| RB-TW-01 | Um chat do Telegram que não está vinculado a um usuário ativo só recebe as instruções de como conectar a conta (P-05). Nesta versão, nenhum chat está vinculado. |
+| RB-TW-01 | Um chat do Telegram que não está vinculado a um usuário só recebe as instruções de como conectar a conta (P-05). Nesta versão, nenhum chat está vinculado. |
 
 ## Texto de instruções (TXT-TW-01)
 

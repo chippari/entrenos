@@ -24,7 +24,7 @@ Descrever as entidades do EntreNós e como elas se ligam, antes de pensar em ban
 | MD-02 | Uma comunidade pode ter **mais de um admin**. | O papel fica no Vínculo; o modelo já permite vários. Proibir exigiria uma regra a mais. | Um admin só. |
 | MD-03 | A **unidade é informada pelo admin no convite** e passa para o Vínculo no cadastro. | O admin sabe quem mora onde. O morador não consegue se declarar em outra unidade. | O morador informa a unidade no cadastro. |
 | MD-04 | **Conectar o Telegram é opcional** para as ajudas comuns e **obrigatório para o Olhar Amigo**, nos dois lados. Quem não tem Telegram recebe os avisos **por e-mail**, se aceitar recebê-los. | O público inclui pessoas que usam e-mail e não usam Telegram; sem outro canal, elas nunca seriam avisadas. O e-mail já existe no cadastro e já é usado no convite (ADR-09). A videochamada do Olhar Amigo acontece no Telegram (ADR-20), e e-mail é lento demais para uma ajuda imediata. | (a) Telegram obrigatório para todos: excluiria quem não usa o aplicativo. (b) Telegram opcional, sem outro canal: quem não tem Telegram ficaria sem avisos. |
-| MD-05 | A **suspensão é do Vínculo**, não da pessoa. Um usuário suspenso numa comunidade continua operando nas outras. Quando a constituição fala em "usuário suspenso" (P-07) ou "usuário ativo" (P-05), lê-se "vínculo suspenso" ou "vínculo ativo" naquela comunidade. | Quem suspende é o admin da comunidade (RF17), e ele só tem poder sobre a própria comunidade. | Status no Usuário (suspensão em todas as comunidades): exigiria um papel com poder sobre todas as comunidades, que nenhum RF prevê. |
+| MD-05 | A **suspensão é do Vínculo**, não da pessoa. Quem tem o vínculo suspenso numa comunidade continua operando nas outras. A constituição usa "vínculo ativo" desde a Issue #28 (P-03, P-05 e P-07). | Quem suspende é o admin da comunidade (RF17), e ele só tem poder sobre a própria comunidade. | Status no Usuário (suspensão em todas as comunidades): exigiria um papel com poder sobre todas as comunidades, que nenhum RF prevê. |
 
 ---
 
@@ -102,7 +102,7 @@ Regras que o diagrama sozinho não mostra. Cada uma vai virar cláusula (RB) nas
 
 | ID | Restrição | Origem |
 |---|---|---|
-| RC-01 | O solicitante e o apoiador têm vínculo **ativo** (não suspenso, MD-05) na comunidade da solicitação. | P-03, P-07 |
+| RC-01 | O solicitante e o apoiador têm vínculo **ativo** (não suspenso nem removido, MD-05) na comunidade da solicitação. | P-03, P-07 |
 | RC-02 | O solicitante nunca é o apoiador da própria solicitação. | P-02 |
 | RC-03 | O apoiador só existe a partir da aceitação. Quando o apoiador desiste (Aceita → Aberta), a solicitação volta a não ter apoiador. | P-02 |
 | RC-04 | Um usuário tem no máximo um vínculo por comunidade. | ADR-10 |
@@ -236,4 +236,3 @@ Não mudam a estrutura do modelo, mas mudam regras. Serão resolvidos nos casos 
 - Quais são os efeitos da suspensão do vínculo?
 - Exclusão de conta (LGPD): apagar ou anonimizar?
 - O telefone continua obrigatório no cadastro?
-- Alinhar o texto da P-05 e da P-07 na constituição com a MD-05 (Issue separada, porque mexe na constituição).
