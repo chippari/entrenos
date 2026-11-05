@@ -28,6 +28,7 @@
 | RF-TW-07 | Event-driven | WHEN um `update_id` novo traz uma mensagem de texto de um chat privado, THE SYSTEM SHALL enviar a esse chat o texto TXT-TW-01 (RB-TW-01). |
 | RF-TW-08 | Unwanted behavior | IF um `update_id` novo não tiver `message`, ou a mensagem não tiver texto, ou o chat não for privado, THEN THE SYSTEM SHALL responder 200 AND não enviar mensagem. |
 | RF-TW-09 | Unwanted behavior | IF o envio do texto TXT-TW-01 falhar, THEN THE SYSTEM SHALL registrar a falha em log AND responder 200. |
+| RF-TW-10 | Unwanted behavior | IF `TELEGRAM_BOT_TOKEN`, `NEXT_PUBLIC_SUPABASE_URL` ou `SUPABASE_SECRET_KEY` não estiverem configurados, THEN THE SYSTEM SHALL responder 500 AND registrar em log só o nome da variável ausente AND não registrar a atualização. |
 | RNF-TW-01 | Ubiquitous | THE SYSTEM SHALL comparar o cabeçalho `X-Telegram-Bot-Api-Secret-Token` com o segredo em tempo constante. |
 | RNF-TW-02 | Ubiquitous | THE SYSTEM SHALL nunca incluir o valor de `TELEGRAM_WEBHOOK_SECRET`, de `TELEGRAM_BOT_TOKEN`, de `SUPABASE_SECRET_KEY` ou do cabeçalho recebido em respostas ou logs. |
 | RNF-TW-03 | Ubiquitous | THE SYSTEM SHALL nunca registrar em log o texto das mensagens recebidas nem o nome ou o nome de usuário de quem enviou. |
@@ -38,7 +39,7 @@
 
 | WHEN | IF/THEN que cobrem a falha |
 |---|---|
-| RF-TW-01 (atualização recebida) | RF-TW-02 (segredo errado), RF-TW-03 (segredo não configurado), RF-TW-04 (corpo inválido), RF-TW-05 (repetida), RF-TW-06 (falha ao registrar) |
+| RF-TW-01 (atualização recebida) | RF-TW-02 (segredo errado), RF-TW-03 (segredo não configurado), RF-TW-04 (corpo inválido), RF-TW-05 (repetida), RF-TW-06 (falha ao registrar), RF-TW-10 (configuração ausente) |
 | RF-TW-07 (mensagem de texto privada) | RF-TW-08 (não é mensagem de texto privada), RF-TW-09 (falha ao enviar) |
 
 ## Verificação
@@ -48,7 +49,7 @@
 | RF-TW-01, 05, 07, 08, 09, RB-TW-01, RNF-TW-03 | Testes unitários do caso de uso, com Fake do registro e Mock do envio (T-09) |
 | RF-TW-01, 05 no banco real | Testes unitários da implementação do registro com dublê do cliente (T-10). A garantia de "uma vez só" vem da chave única no banco: ⚠️ verificada no teste ponta a ponta (T-13), não em teste unitário |
 | RF-TW-07 (envio de fato), RNF-TW-02 (token) | Testes unitários da implementação do envio, com `fetch` simulado (T-11) |
-| RF-TW-02, 03, 04, 06, RNF-TW-02, 05 | Testes unitários da rota, com dublê do caso de uso (T-12) |
+| RF-TW-02, 03, 04, 06, 10, RNF-TW-02, 05 | Testes unitários da rota, com dublê do caso de uso (T-12) |
 | RNF-TW-01 | Revisão de código, como na RNF-KA-01 (teste unitário não mede tempo) ⚠️ |
 | RNF-TW-04 | Revisão da migration (T-10) |
 | Todas | Caso de teste manual no celular, depois do `setWebhook` (T-13) |
@@ -58,3 +59,4 @@
 - Ordem escolhida (P-06): o `update_id` é registrado antes de processar. Se o envio falhar depois do registro (RF-TW-09), a resposta 200 evita um reenvio que seria ignorado de qualquer forma: a mensagem de instruções se perde, mas nada é executado duas vezes.
 - RF-TW-03 aplica a lição da Issue #4: quem não está autorizado não descobre nada da configuração.
 - O `update_id` é sequencial e o `chat.id` pode passar de 32 bits (até 52). No banco, os dois vão como `bigint`.
+- RF-TW-10 (incluído na T-12): com configuração ausente, a resposta 500 faz o Telegram reenviar depois. Como o `update_id` não foi registrado, a mensagem ainda é processada quando a configuração for corrigida.
