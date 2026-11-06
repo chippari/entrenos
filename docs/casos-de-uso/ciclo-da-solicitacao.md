@@ -301,8 +301,8 @@ Não mudam os fluxos acima, mas precisam de resposta na spec ou nos mockups.
 - Textos exatos dos avisos e das perguntas do bot (catálogo de mensagens). Os rótulos estão em `docs/mockups/meus-pedidos.md` e `docs/mockups/eu-ajudo.md`.
 - Como o sistema sabe que já perguntou (DC-04) ou já avisou (DC-05), para fazer isso uma vez só. Talvez exija um dado novo na Solicitação, o que mexeria no modelo.
 - Quem não usa Telegram: a pergunta da DC-04 e o aviso da DC-05 também vão por e-mail, com um link para o webapp? (RF24)
-- Vínculo suspenso ou removido depois de criar ou aceitar: a pessoa ainda pode cancelar, desistir ou concluir? (efeitos da suspensão, RF17)
+- Vínculo suspenso ou removido depois de criar ou aceitar: resolvido em parte na spec. A pessoa não cancela, não desiste e não conclui naquela comunidade, porque toda ação exige vínculo ativo (RB-CS-02 em `docs/specs/ciclo-da-solicitacao.md`). O que acontece com as solicitações que ela já tinha fica para a spec do RF17.
 - Mensagens do bot já entregues continuam no histórico do Telegram depois que a solicitação termina: a resposta do aceite ao apoiador, com o nome, a unidade e o telefone do solicitante (UC-02 A1), e o aviso do aceite ao solicitante (UC-02 passo 7), se ele levar o contato do apoiador. A DC-10 vale para o que o sistema mostra. Decidir no catálogo de mensagens do bot se o contato vai no chat e se o bot apaga a mensagem ⚠️ (conferir na documentação do Telegram o que um bot pode apagar).
-- Na spec: concluir precisa ser condicionado ao status e ao apoiador ao mesmo tempo (UC-05 E4), do mesmo jeito que o aceite é condicionado ao status (P-01).
+- Resolvido na spec: toda transição só é gravada se a solicitação ainda estiver no estado esperado (RB-CS-04), e concluir confere também o apoiador (RF-CS-36).
 - Texto da resposta do bot na EB-2.
-- Na spec: onde fica a recusa por horário vencido. Proposta: como condição do caso de uso Aceitar, fora da tabela de transições da P-02.
+- Resolvido na spec: a recusa por horário vencido fica no caso de uso Aceitar (RF-CS-22), fora da tabela de transições.
