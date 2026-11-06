@@ -119,6 +119,6 @@ A E2 do UC-01 (categoria fora das sete) não tem texto de tela: no webapp, a cat
 ## Pendências
 
 - Cancelar, concluir, Meus pedidos (aba "Eu pedi"), os rótulos do solicitante e a tela do solicitante com o contato do apoiador: `docs/mockups/meus-pedidos.md` (Issue #43).
-- Desistir, a aba "Eu ajudo" e o rótulo do apoiador: Issue do apoiador. Tela de Perfil (inclui marcar "Outra ajuda" entre as ajudas oferecidas).
+- Desistir, a aba "Eu ajudo" e o rótulo do apoiador: `docs/mockups/eu-ajudo.md` (Issue #45). Tela de Perfil (inclui marcar "Outra ajuda" entre as ajudas oferecidas).
 - Catálogo de mensagens do bot: avisos, confirmação no bot (RF-US-01 e RNF-US-02 no bot) e RNF-US-12.
 - Conferir na tela real os RNF-US-05, RNF-US-06, RNF-US-09 e RNF-US-11, e o foco do teclado (RU-01 da identidade visual).

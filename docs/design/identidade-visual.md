@@ -56,7 +56,7 @@ Cada selo usa o preenchimento e o texto da tabela, sempre com ícone e palavra (
 | Cancelada | X | `#F8DDE2` | `#8A1C33` | `#4A1E28` | `#FFB8C4` |
 | Aviso (rótulos de exibição) | relógio | `#F6EBCF` | `#5F4614` | `#3D3217` | `#EED69F` |
 
-Os rótulos de exibição ("Horário passou, ninguém aceitou", "Falta concluir", "Aguardando confirmação do solicitante") usam a cor de aviso, com o ícone de relógio. Eles não são status. Os dois primeiros foram aprovados nos mockups do solicitante (`docs/mockups/meus-pedidos.md`); o terceiro ainda é exemplo ⚠️ (`docs/casos-de-uso/ciclo-da-solicitacao.md`, seção 5).
+Os rótulos de exibição ("Horário passou, ninguém aceitou", "Falta concluir", "Aguardando quem pediu concluir") usam a cor de aviso, com o ícone de relógio. Eles não são status. Os textos foram aprovados nos mockups (`docs/mockups/meus-pedidos.md` e `docs/mockups/eu-ajudo.md`).
 
 O preenchimento do selo fica perto da cor do cartão e do fundo (de 1,10:1 a 1,53:1). Isso não fere o RNF-US-04: o selo não tem borda, não é interativo, e a informação está no texto e no ícone, já conferidos a 4,5:1 ou mais.
 
