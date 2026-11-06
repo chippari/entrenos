@@ -52,7 +52,7 @@ Estes conceitos são listas fechadas de valores, não entidades.
 
 | Conceito | Valores |
 |---|---|
-| Categoria | receber encomendas · regar plantas · pequenas compras · auxílio com tecnologia · companhia · auxílio visual |
+| Categoria | receber encomendas · regar plantas · pequenas compras · auxílio com tecnologia · companhia · auxílio visual · outra ajuda |
 | Tipo de solicitação | normal · Olhar Amigo |
 | Status da solicitação | aberta · aceita · concluída · cancelada |
 | Status da comunidade | pendente · ativa (é a comunidade "aprovada" da P-07) · reprovada |
@@ -111,7 +111,7 @@ Regras que o diagrama sozinho não mostra. Cada uma vai virar cláusula (RB) nas
 | RC-07 | Toda denúncia tem **exatamente um** alvo: um usuário **ou** uma solicitação. | RF16 |
 | RC-08 | Solicitação do tipo Olhar Amigo exige Conta do Telegram do solicitante e do apoiador. | MD-04, ADR-20 |
 | RC-09 | Quem tem Conta do Telegram recebe os avisos pelo Telegram. Quem não tem e aceita avisos por e-mail recebe por e-mail. Quem não tem nenhum dos dois não recebe aviso e acompanha pelo webapp. | MD-04, RF07, RF24 |
-| RC-10 | Unidade e telefone do solicitante só são visíveis ao apoiador que aceitou e nunca aparecem em listagens. | P-04 |
+| RC-10 | Nome, unidade e telefone do solicitante só são visíveis ao apoiador que aceitou e nunca aparecem em listagens nem em avisos. | P-04; nome: DC-08 (ADR-34) |
 | RC-11 | Não existe avaliação entre moradores. O único registro sobre a conduta de alguém é a denúncia. | D-01, ADR-13 |
 
 ---
@@ -194,6 +194,7 @@ classDiagram
     auxilio_com_tecnologia
     companhia
     auxilio_visual
+    outra_ajuda
   }
 
   Usuario "1" -- "0..*" Vinculo : R1 participa
