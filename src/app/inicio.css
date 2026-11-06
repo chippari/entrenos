@@ -1,0 +1,718 @@
+/* Página inicial pública (/). As cores, o foco (RU-01), os botões e o link vêm de demo/demo.css,
+   pela classe "demo". Aqui fica só o desenho da página; nenhuma cor nova (RU-07).
+   As sombras são preto com transparência: não pintam texto nem fundo.
+   Espaços na escala 8 / 16 / 24 / 32 / 48 / 64 / 96 / 128 px. */
+
+.demo.inicio {
+  display: flex;
+  flex-direction: column;
+  /* Corpo do celular: escuro nos dois temas, com cores que já estão na identidade visual. */
+  --moldura: var(--texto);
+  --altura-do-topo: 64px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .demo.inicio {
+    --moldura: var(--cartao);
+  }
+}
+
+.inicio main {
+  flex: 1;
+}
+
+/* Conteúdo centralizado, com no máximo 1200 px. */
+.inicio .largura {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-right: 16px;
+  padding-left: 16px;
+}
+
+/* Faixas: fundo e cartao se alternam entre as seções, para dar profundidade nos dois temas.
+   O corte lateral segura o círculo decorativo dos celulares, sem criar rolagem para o lado. */
+.inicio .faixa {
+  padding-top: 64px;
+  padding-bottom: 64px;
+  overflow-x: clip;
+  background: var(--fundo);
+  /* Âncoras: o título não fica escondido atrás do cabeçalho fixo. */
+  scroll-margin-top: var(--altura-do-topo);
+}
+
+.inicio .faixa-cartao {
+  background: var(--cartao);
+}
+
+/* Botões da página: raio de 12 px e transição de 150 ms. */
+.demo.inicio .botao {
+  border-radius: 12px;
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+
+/* Cabeçalho fixo */
+
+.inicio .topo {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid var(--borda);
+  background: var(--cartao);
+}
+
+/* Sombra leve ao rolar, só com CSS. Onde o navegador não tem animation-timeline, fica a linha de baixo. */
+@supports (animation-timeline: scroll()) {
+  .inicio .topo {
+    border-bottom-color: transparent;
+    animation: inicio-sombra-ao-rolar linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 0 64px;
+  }
+
+  @keyframes inicio-sombra-ao-rolar {
+    to {
+      border-bottom-color: var(--borda);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+  }
+}
+
+.inicio .topo-conteudo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: var(--altura-do-topo);
+}
+
+.inicio .topo-direita {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+/* Links de âncora do cabeçalho: escondidos no celular. */
+.inicio .navegacao {
+  display: none;
+  gap: 32px;
+}
+
+.inicio .ancora {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.inicio .nome-do-app {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 22px;
+}
+
+/* Marca provisória (até o logo da decisão V6): círculo na cor principal, com o ícone por cima. */
+.inicio .simbolo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--principal);
+  color: var(--texto-no-principal);
+}
+
+.inicio .simbolo-menor {
+  width: 32px;
+  height: 32px;
+}
+
+/* O botão Entrar do cabeçalho: largura do texto e 44 px de altura mínima. */
+.demo.inicio .entrar {
+  width: auto;
+  min-height: 44px;
+  padding: 8px 24px;
+}
+
+/* Textos */
+
+.inicio .etiqueta {
+  color: var(--principal);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.inicio .titulo-da-pagina {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.inicio .subtitulo {
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+.inicio .titulo-da-secao {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.inicio .introducao {
+  color: var(--texto-secundario);
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+.inicio .texto-maior {
+  font-size: 20px;
+}
+
+.inicio .cabeca {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 720px;
+  margin-bottom: 48px;
+}
+
+/* Abertura (hero) */
+
+.inicio .abertura {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 64px;
+}
+
+.inicio .abertura-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.inicio .botoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.demo.inicio .botoes .botao {
+  width: auto;
+  padding: 8px 24px;
+}
+
+/* Os sete tipos de ajuda. */
+.inicio .chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.inicio .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background: var(--fundo);
+  font-size: 16px;
+}
+
+.inicio .chip svg {
+  flex-shrink: 0;
+  color: var(--principal);
+}
+
+/* Celular: moldura em CSS, com a tela dentro e um círculo decorativo atrás. */
+
+.inicio .palco {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  isolation: isolate;
+}
+
+.inicio .palco::before {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  z-index: -1;
+  width: 125%;
+  max-width: 416px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--principal);
+  content: "";
+  opacity: 0.1;
+  translate: -32% 0;
+}
+
+.inicio .celular {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  padding: 8px;
+  border: 1px solid var(--borda);
+  border-radius: 40px;
+  background: var(--moldura);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.18);
+}
+
+/* "Notch": acompanha a largura do celular, para nunca cobrir o conteúdo da tela. */
+.inicio .celular::before {
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  z-index: 1;
+  width: 32%;
+  aspect-ratio: 8 / 1;
+  border-radius: 0 0 12px 12px;
+  background: var(--moldura);
+  content: "";
+  translate: -50% 0;
+}
+
+/* Todas as telas na mesma proporção (390 × 844); a mais comprida aparece a partir do topo. */
+.inicio .celular img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 390 / 844;
+  border-radius: 32px;
+  object-fit: cover;
+  object-position: top;
+}
+
+.inicio .abertura .celular {
+  max-width: 320px;
+}
+
+/* Como funciona: texto e celular, alternando de lado no desktop. */
+
+.inicio .passos-alternados {
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+}
+
+.inicio .passo-linha {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 48px;
+}
+
+.inicio .passo-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Número grande ao fundo: decorativo (a ordem vem da lista numerada). */
+.inicio .numero-grande {
+  color: var(--texto-secundario);
+  font-size: 96px;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.25;
+}
+
+.inicio .titulo-do-passo {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* Cartões */
+
+.inicio .grade-de-3 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+.inicio .cartao-da-pagina {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 32px;
+  border: 1px solid var(--borda);
+  border-radius: 16px;
+  background: var(--cartao);
+  transition: box-shadow 150ms ease;
+  /* Fundo do ladrilho do ícone e do número: o contrário do fundo do cartão. */
+  --ladrilho: var(--fundo);
+}
+
+/* Cartão dentro de uma faixa com fundo cartao. */
+.inicio .cartao-invertido {
+  background: var(--fundo);
+  --ladrilho: var(--cartao);
+}
+
+.inicio .ladrilho {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--ladrilho);
+  color: var(--principal);
+}
+
+.inicio .titulo-do-cartao {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.inicio .numero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background: var(--ladrilho);
+  font-size: 16px;
+}
+
+/* Linhas de tamanho parecido: evita deixar "e-" sozinho no fim da linha em "e-mail". */
+.inicio .cartao-da-pagina p {
+  text-wrap: balance;
+}
+
+/* Privacidade: as duas telas lado a lado, também no celular. */
+
+.inicio .duas-telas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 260px));
+  justify-content: center;
+  gap: 16px;
+  margin-top: 64px;
+}
+
+.inicio .tela-com-legenda {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Duas colunas: texto de um lado, desenho ou lista do outro. No celular, um embaixo do outro. */
+
+.inicio .duas-colunas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 48px;
+}
+
+.inicio .duas-colunas .cabeca {
+  margin-bottom: 0;
+}
+
+.inicio .em-construcao {
+  align-self: flex-start;
+  padding: 8px 16px;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  color: var(--texto-secundario);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Telegram: conversa de exemplo desenhada em CSS. */
+
+.inicio .conversa {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 448px;
+  margin: 0 auto;
+  padding: 24px;
+  border: 1px solid var(--borda);
+  border-radius: 16px;
+  background: var(--cartao);
+}
+
+.inicio .conversa-topo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.inicio .conversa-tipo {
+  color: var(--texto-secundario);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.inicio .balao {
+  max-width: 90%;
+  padding: 16px;
+  border-radius: 16px 16px 16px 4px;
+  background: var(--fundo);
+}
+
+.inicio .botoes-desenhados {
+  display: flex;
+  gap: 8px;
+}
+
+.inicio .botao-desenhado {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 8px;
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* O que fica de fora: lista com X. */
+
+.inicio .lista-de-fora {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+.inicio .lista-de-fora li {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 20px;
+}
+
+.inicio .marca-de-fora {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--fundo);
+  color: var(--texto-secundario);
+}
+
+/* Para comunidades */
+
+.inicio .depois-dos-passos {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 48px;
+}
+
+/* O botão ocupa só a largura do texto (no celular, a linha inteira). O marcador do <summary> some. */
+.demo.inicio .aviso-de-cadastro summary {
+  width: fit-content;
+  max-width: 100%;
+  list-style: none;
+}
+
+.inicio .aviso-de-cadastro summary::-webkit-details-marker {
+  display: none;
+}
+
+.inicio .aviso-de-cadastro p {
+  margin-top: 16px;
+}
+
+/* Rodapé */
+
+.inicio .rodape-da-pagina {
+  padding-top: 48px;
+  padding-bottom: 48px;
+  border-top: 1px solid var(--borda);
+  background: var(--cartao);
+}
+
+.inicio .rodape-conteudo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
+}
+
+.inicio .rodape-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--texto-secundario);
+  font-size: 16px;
+}
+
+.inicio .rodape-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 32px;
+}
+
+/* Celular: as duas telas da privacidade ficam pequenas, então a moldura afina. */
+@media (max-width: 899px) {
+  .inicio .duas-telas .celular {
+    padding: 6px;
+    border-radius: 28px;
+  }
+
+  .inicio .duas-telas .celular::before {
+    top: 5px;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .inicio .duas-telas .celular img {
+    border-radius: 22px;
+  }
+}
+
+/* A lista do que fica de fora cabe em duas colunas a partir daqui. */
+@media (min-width: 600px) {
+  .inicio .lista-de-fora {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 32px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 900px) {
+  .demo.inicio {
+    --altura-do-topo: 72px;
+  }
+
+  .inicio .largura {
+    padding-right: 32px;
+    padding-left: 32px;
+  }
+
+  .inicio .faixa {
+    padding-top: 96px;
+    padding-bottom: 96px;
+  }
+
+  .inicio .navegacao {
+    display: flex;
+  }
+
+  .inicio .titulo-da-pagina {
+    font-size: 56px;
+  }
+
+  .inicio .titulo-da-secao {
+    font-size: 40px;
+  }
+
+  .inicio .cabeca {
+    margin-bottom: 64px;
+  }
+
+  .inicio .abertura {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 96px;
+  }
+
+  .demo.inicio .botoes .botao {
+    padding: 8px 32px;
+  }
+
+  .inicio .passos-alternados {
+    gap: 96px;
+  }
+
+  .inicio .passo-linha {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 96px;
+  }
+
+  .inicio .passo-texto {
+    max-width: 448px;
+  }
+
+  /* Linha par: o celular vai para a esquerda, e o círculo decorativo acompanha. */
+  .inicio .passo-linha:nth-child(even) .passo-texto {
+    order: 2;
+  }
+
+  .inicio .passo-linha:nth-child(even) .palco::before {
+    translate: -68% 0;
+  }
+
+  .inicio .grade-de-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 32px;
+  }
+
+  .inicio .duas-telas {
+    gap: 96px;
+  }
+
+  .inicio .duas-colunas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 96px;
+  }
+
+  .inicio .rodape-conteudo {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+}
+
+/* Só onde há mouse: o botão sobe um pouco e o cartão ganha sombra. */
+@media (hover: hover) {
+  .demo.inicio .botao:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.16);
+    transform: translateY(-2px);
+  }
+
+  .inicio .ancora:hover {
+    color: var(--principal);
+    text-decoration: underline;
+  }
+}
+
+@media (hover: hover) and (min-width: 900px) {
+  .inicio .cartao-da-pagina:hover {
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo.inicio .botao,
+  .inicio .cartao-da-pagina {
+    transition: none;
+  }
+
+  .demo.inicio .botao:hover {
+    transform: none;
+  }
+}

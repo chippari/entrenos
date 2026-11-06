@@ -152,6 +152,17 @@
   font-weight: 700;
 }
 
+/* Link da identidade visual: cor principal, sublinhado. Área de toque de 44 px. */
+.demo .link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--principal);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
 .demo .nota {
   display: flex;
   gap: 10px;
@@ -536,6 +547,26 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 12px;
+}
+
+.demo .dois-campos > * {
+  min-width: 0;
+}
+
+/* Safari do iPhone: sem a aparência nativa, a data e o horário respeitam a largura da coluna
+   e não encolhem quando estão vazios. A altura mínima (48px, acima dos 44px de toque) vem de .entrada. */
+.demo .entrada[type="date"],
+.demo .entrada[type="time"] {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Texto de apoio do campo: sem o negrito do rótulo. */
+.demo .campo .apoio {
+  font-weight: 400;
 }
 
 .demo .tipos {

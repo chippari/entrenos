@@ -1,16 +1,16 @@
 "use client";
 
-// Demonstração temporária da apresentação: dois celulares, um morador fictício em cada.
+// Demonstração temporária da apresentação: dois celulares, cada um com a conta de um morador.
 // As telas seguem docs/mockups/; a navegação entre elas é estado do React, sem rotas novas.
-import { useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useEffect, useState } from "react";
-import { BarraDeNavegacao, MORADORES, type Aba, type Acao, type Pedido } from "./pecas";
+import { useCallback, useEffect, useState } from "react";
+import type { Morador } from "@/portas/repositorio-da-demo";
+import { BarraDeNavegacao, type Aba, type Acao, type Pedido } from "./pecas";
 import {
   Confirmar,
   ConfirmarLimpeza,
   Detalhe,
-  Escolha,
   Inicio,
+  Login,
   MeusPedidos,
   PedirAjuda,
   Perfil,
@@ -34,20 +34,51 @@ type TelaPorCima =
 export default function PaginaDaDemo() {
   return (
     <main>
-      <Suspense fallback={<p className="tela apoio">Carregando…</p>}>
-        <Demo />
-      </Suspense>
+      <Demo />
     </main>
   );
 }
 
 function Demo() {
-  const eu = useSearchParams().get("eu");
-  if (!eu || !Object.hasOwn(MORADORES, eu)) return <Escolha />;
-  return <Morador key={eu} eu={eu} />;
+  // undefined = ainda conferindo a sessão; null = sem sessão.
+  const [morador, setMorador] = useState<Morador | null | undefined>(undefined);
+
+  // A sessão fica num cookie que só o servidor lê: quem diz se ela existe é a API.
+  useEffect(() => {
+    let ativo = true;
+    fetch("/api/demo", { cache: "no-store" })
+      .then(async (resposta) => (resposta.ok ? ((await resposta.json()) as { morador: Morador }).morador : null))
+      .catch(() => null)
+      .then((lido) => {
+        if (ativo) setMorador(lido);
+      });
+    return () => {
+      ativo = false;
+    };
+  }, []);
+
+  const voltarAoLogin = useCallback(() => setMorador(null), []);
+
+  async function sair() {
+    await fetch("/api/demo/sair", { method: "POST" }).catch(() => null);
+    voltarAoLogin();
+  }
+
+  if (morador === undefined) return <p className="tela apoio">Carregando…</p>;
+  // Sem sessão, a demonstração abre direto no login; a apresentação fica na página inicial (/).
+  if (morador === null) return <Login aoEntrar={setMorador} />;
+  return <Sessao key={morador.id} morador={morador} aoSair={sair} aoPerderSessao={voltarAoLogin} />;
 }
 
-function Morador({ eu }: { eu: string }) {
+function Sessao({
+  morador,
+  aoSair,
+  aoPerderSessao,
+}: {
+  morador: Morador;
+  aoSair: () => void;
+  aoPerderSessao: () => void;
+}) {
   const [pedidos, setPedidos] = useState<Pedido[] | null>(null);
   // O relógio da tela anda junto com a atualização da lista (rótulos de horário e "Hoje").
   const [agora, setAgora] = useState(() => new Date());
@@ -58,13 +89,15 @@ function Morador({ eu }: { eu: string }) {
 
   const carregar = useCallback(async () => {
     try {
-      const resposta = await fetch(`/api/demo?eu=${eu}`, { cache: "no-store" });
+      const resposta = await fetch("/api/demo", { cache: "no-store" });
       if (resposta.ok) setPedidos(((await resposta.json()) as { pedidos: Pedido[] }).pedidos);
+      // Sessão encerrada (401) ou cadastro removido (403): volta para o login.
+      else if (resposta.status === 401 || resposta.status === 403) aoPerderSessao();
     } catch {
       // Sem rede por um instante: a próxima volta tenta de novo.
     }
     setAgora(new Date());
-  }, [eu]);
+  }, [aoPerderSessao]);
 
   useEffect(() => {
     const primeira = setTimeout(carregar, 0);
@@ -96,7 +129,6 @@ function Morador({ eu }: { eu: string }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          eu,
           acao,
           id: pedido.id,
           // RF-CS-36: na conclusão, vai o apoiador que a tela estava mostrando.
@@ -117,7 +149,7 @@ function Morador({ eu }: { eu: string }) {
 
   async function limpar() {
     setOcupado(true);
-    await fetch(`/api/demo?eu=${eu}`, { method: "DELETE" }).catch(() => null);
+    await fetch("/api/demo", { method: "DELETE" }).catch(() => null);
     await carregar();
     setOcupado(false);
     irPara("inicio");
@@ -135,7 +167,6 @@ function Morador({ eu }: { eu: string }) {
   if (porCima?.tipo === "criar") {
     return (
       <PedirAjuda
-        eu={eu}
         aoVoltar={() => setPorCima(null)}
         aoPublicar={(resumo) => {
           setPorCima({ tipo: "publicado", resumo });
@@ -191,7 +222,7 @@ function Morador({ eu }: { eu: string }) {
     <>
       {aba === "inicio" && (
         <Inicio
-          eu={eu}
+          morador={morador}
           pedidos={pedidos}
           agora={agora}
           aoPedirAjuda={() => setPorCima({ tipo: "criar" })}
@@ -208,7 +239,9 @@ function Morador({ eu }: { eu: string }) {
           aoCancelar={(pedido) => setPorCima({ tipo: "confirmar", acao: "cancelar", pedido, veioDaLista: true })}
         />
       )}
-      {aba === "perfil" && <Perfil eu={eu} aoLimpar={() => setPorCima({ tipo: "limpar" })} />}
+      {aba === "perfil" && (
+        <Perfil morador={morador} aoSair={aoSair} aoLimpar={() => setPorCima({ tipo: "limpar" })} />
+      )}
       <BarraDeNavegacao aba={aba} aoMudar={setAba} />
     </>
   );
