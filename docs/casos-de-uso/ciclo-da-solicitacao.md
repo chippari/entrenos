@@ -93,7 +93,7 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 |---|---|---|---|
 | "Horário passou, ninguém aceitou" | Solicitante | Solicitação Aberta, com o horário já passado | DC-03; texto aprovado em `docs/mockups/meus-pedidos.md` |
 | "Falta concluir" | Solicitante | Solicitação Aceita, com o horário já passado | DC-04; texto aprovado na DT-13 de `docs/mockups/meus-pedidos.md` |
-| "Aguardando confirmação do solicitante" (exemplo ⚠️) | Apoiador | Solicitação Aceita, com o horário já passado | DC-04 |
+| "Aguardando quem pediu concluir" | Apoiador | Solicitação Aceita, com o horário já passado | DC-04; texto aprovado na DT-18 de `docs/mockups/eu-ajudo.md` |
 
 ## 6. Casos de uso
 
@@ -272,7 +272,7 @@ Não existe avaliação entre moradores depois da conclusão (D-01, RC-11).
 
 **Fluxos alternativos:**
 - **A1 — Pergunta do bot (DC-04).** O horário passou e a solicitação continua Aceita. O bot pergunta ao solicitante uma vez, por exemplo: "A ajuda foi feita?" ⚠️, com o botão **Sim, foi feita**. Se ele tocar, o sistema executa os passos 3 e 4, com origem bot. A pergunta já é a confirmação: o bot não pede outra (DC-12).
-- **A2 — Rótulos no webapp (DC-04).** Depois do horário, o solicitante vê "Falta concluir" e o apoiador vê "Aguardando confirmação do solicitante". O solicitante pode concluir pelo fluxo principal.
+- **A2 — Rótulos no webapp (DC-04).** Depois do horário, o solicitante vê "Falta concluir" e o apoiador vê "Aguardando quem pediu concluir". O solicitante pode concluir pelo fluxo principal.
 - **A3 — O solicitante não responde.** A solicitação continua Aceita. O bot não pergunta de novo, e o sistema não conclui sozinho (DC-04).
 
 **Exceções:**
@@ -293,7 +293,7 @@ Não existe avaliação entre moradores depois da conclusão (D-01, RC-11).
 
 Não mudam os fluxos acima, mas precisam de resposta na spec ou nos mockups.
 
-- Textos exatos dos avisos, das perguntas do bot e do rótulo do apoiador (mockups do apoiador e catálogo de mensagens). Os rótulos do solicitante estão em `docs/mockups/meus-pedidos.md`.
+- Textos exatos dos avisos e das perguntas do bot (catálogo de mensagens). Os rótulos estão em `docs/mockups/meus-pedidos.md` e `docs/mockups/eu-ajudo.md`.
 - Como o sistema sabe que já perguntou (DC-04) ou já avisou (DC-05), para fazer isso uma vez só. Talvez exija um dado novo na Solicitação, o que mexeria no modelo.
 - Quem não usa Telegram: a pergunta da DC-04 e o aviso da DC-05 também vão por e-mail, com um link para o webapp? (RF24)
 - Vínculo suspenso ou removido depois de criar ou aceitar: a pessoa ainda pode cancelar, desistir ou concluir? (efeitos da suspensão, RF17)

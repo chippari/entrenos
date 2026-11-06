@@ -93,8 +93,8 @@ Exceções sem tela própria. Elas usam a mesma estrutura da tela 8 (ícone de e
 
 | Exceção | Texto proposto | Botão |
 |---|---|---|
-| UC-04 E1 e UC-05 E2 (pedido já Concluída) | "Este pedido já foi concluído." (selo Concluída no cartão) | Ver meus pedidos |
-| UC-04 E1 e UC-05 E2 (pedido já Cancelada) | "Este pedido já foi cancelado." (selo Cancelada no cartão) | Ver meus pedidos |
+| UC-04 E1 e UC-05 E2 (pedido já Concluída) | "Este pedido foi concluído" (título; selo Concluída no cartão) | Ver meus pedidos |
+| UC-04 E1 e UC-05 E2 (pedido já Cancelada) | "Este pedido foi cancelado" (título; selo Cancelada no cartão) | Ver meus pedidos |
 | UC-05 E1 (o pedido voltou a Aberta) | "Quem tinha aceitado desistiu. O pedido voltou a ficar aberto e não foi concluído." (selo Aberta no cartão) | Ver o pedido |
 
 No webapp, a E1 do UC-05 só acontece quando o apoiador desiste entre a abertura da tela 3 e o Confirmar. Por isso o texto fala da desistência.
@@ -117,7 +117,7 @@ A E2 do UC-04 e a E3 do UC-05 (o morador não é o solicitante) não acontecem p
 
 ## Pendências
 
-- Aba "Eu ajudo", desistir e o rótulo do apoiador ("Aguardando confirmação do solicitante"): Issue do apoiador.
+- Aba "Eu ajudo", desistir e o rótulo do apoiador: `docs/mockups/eu-ajudo.md` (Issue #45).
 - Cancelar e concluir pelo bot: catálogo de mensagens do bot e Issue #42.
 - Tela de Perfil (inclui marcar "Outra ajuda" entre as ajudas oferecidas).
 - Abas no código: componente com as teclas de seta do teclado ⚠️ (RNF-US-11).
