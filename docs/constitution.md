@@ -25,7 +25,7 @@ Princípios que nenhuma task pode violar. Todo agente e todo humano lê este arq
   Concluída e Cancelada são finais. Qualquer outra transição gera erro explícito e nada muda. Webapp e bot chamam a **mesma** função de transição, escrita como tabela de transições (não como `switch`).
 - **Porquê:** dois caminhos de código para a mesma ação divergem sem ninguém perceber.
 - **Verificação:** testes unitários de cada transição válida e de cada transição inválida (toda cláusula IF/THEN tem teste de erro, A6 s.10). Revisão: nenhuma rota de API nem handler do bot muda status sem chamar essa função.
-- **Situação:** Prevista.
+- **Situação:** testes unitários de cada transição Em vigor (`tests/dominio/solicitacao/maquina-de-estados.test.ts`, T-15). Revisão de rotas e handlers do bot: Prevista (nasce com o primeiro caso de uso do ciclo).
 
 ### P-03 — Isolamento por comunidade no banco (RLS), por vínculo ativo
 - **Regra:** toda leitura e escrita de dado de uma comunidade checa, no banco, se o usuário tem vínculo ativo naquela comunidade, mesmo que a API já tenha checado. Um usuário pode estar em várias comunidades: nunca assumir "a comunidade do usuário". Toda tabela nova nasce, na mesma migration, com RLS ligado, `revoke all` de `anon`, `authenticated` e `service_role`, depois `grant` só do que cada papel usa, e política RLS para cada papel sujeito ao RLS (`anon`, `authenticated`) que receba `grant`. Tabela usada só pelo `service_role` fica sem política: com o RLS ligado, os outros papéis não acessam nada (ADR-31).

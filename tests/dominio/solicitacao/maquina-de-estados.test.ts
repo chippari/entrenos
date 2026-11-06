@@ -349,6 +349,22 @@ describe("transicionar", () => {
       expect(resultado).toEqual({ ok: false, motivo: "apoiador_mudou" });
     });
 
+    // Atende RF-CS-36
+    it("deve recusar com apoiador_mudou quando o apoiador visto é null mesmo que o estado aceita esteja sem apoiador", () => {
+      // ARRANGE
+      const estado: EstadoDaSolicitacao = { status: "aceita", solicitanteId: SOLICITANTE, apoiadorId: null };
+
+      // ACT
+      const resultado = transicionar(estado, {
+        acao: "concluir",
+        autorId: SOLICITANTE,
+        apoiadorVistoId: null,
+      });
+
+      // ASSERT
+      expect(resultado).toEqual({ ok: false, motivo: "apoiador_mudou" });
+    });
+
     // Atende RF-CS-38
     it("deve recusar com transicao_invalida quando o status atual está fora da tabela", () => {
       // ARRANGE
