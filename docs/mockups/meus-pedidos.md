@@ -13,9 +13,9 @@
 | 1 | Meus pedidos, aba "Eu pedi" | UC-04 A3 (Cancelar ao lado do rótulo); UC-05 A2 (rótulo); RF12 (histórico) | DC-03 e DC-04 (rótulos); RC-10 e RC-12 (lista sem contato de ninguém); RU-05 (status com ícone e palavra); DT-09, DT-10, DT-13 |
 | 2 | Meu pedido Aberta | UC-04, passos 1 e 2 | DT-11 (Cancelar neutro); DC-03 (variação com o horário passado, só em texto) |
 | 3 | Meu pedido Aceita | UC-02, passo 8 (lado do solicitante); UC-04 e UC-05, passos 1 e 2 | DC-09 e RC-12 (contato do apoiador); DC-10 (só enquanto Aceita); DC-11 (Concluir antes do horário); DC-04 (variação com o horário passado, só em texto); RF22 (comunidade); DT-11, DT-16 |
-| 4 | Confirmar o cancelamento | UC-04, passo 2 | DC-10; DT-12, DT-14, DT-15, DT-17 |
+| 4 | Confirmar o cancelamento | UC-04, passo 2; A5 (Voltar) | DC-10; DT-12, DT-14, DT-15, DT-17 |
 | 5 | Pedido cancelado | UC-04, passos 3 e 4; A4 | RU-04 (vermelho só no selo); DC-10 |
-| 6 | Confirmar a conclusão | UC-05, passo 2 | DC-12 (confirmação no webapp); DC-10; DT-12, DT-15 |
+| 6 | Confirmar a conclusão | UC-05, passo 2; A4 (Voltar) | DC-12 (confirmação no webapp); DC-10; DT-12, DT-15 |
 | 7 | Pedido concluído | UC-05, passos 3 e 4 | D-01 e RC-11 (sem avaliação); DC-10 |
 | 8 | Quem vai ajudar mudou | UC-05, E4 | Selo Aceita no cartão (o pedido continua Aceita); modelo para as recusas sem tela própria |
 | 9 | Tema escuro | As telas 1 a 8 | RNF-US-03, RNF-US-04 (V2 da identidade visual) |

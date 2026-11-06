@@ -201,11 +201,13 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 **Fluxos alternativos:**
 - **A1 — Pelo bot.** O apoiador toca em **Desistir** numa mensagem do bot. O sistema executa os passos 3 a 6, com origem bot.
 - **A2 — O horário já passou.** No passo 5, ninguém é avisado de novo (DC-02). O solicitante passa a ver o rótulo "Horário passou, ninguém aceitou" (DC-03) e recebe o aviso da DC-05 (UC-04, A2).
+- **A3 — Volta na confirmação.** No passo 2, no webapp, o apoiador toca em Voltar ou sai da tela. Nada muda, e ele continua vendo o nome, a unidade e o telefone de quem pediu.
 
 **Exceções:**
-- **E1 — A solicitação não está mais Aceita** (o solicitante cancelou ou concluiu antes). O sistema recusa e informa o status atual (P-02).
+- **E1 — A solicitação não está mais Aceita** (o solicitante cancelou ou concluiu antes, ou o próprio apoiador já desistiu por outro canal). O sistema recusa e informa o status atual (P-02).
 - **E2 — O morador não é o apoiador dessa solicitação.** O sistema recusa.
 - **EB-1 e EB-2** (seção 1), no fluxo A1.
+- No webapp, as exceções E1 e E2 são conferidas quando o apoiador confirma (passo 2), porque a situação pode mudar entre os dois toques (por exemplo, quem pediu cancela, ou a desistência já foi feita pelo bot e outro morador aceitou).
 
 **Pós-condições:**
 - Sucesso: a solicitação está Aberta, sem apoiador; a Transição foi registrada; o solicitante foi avisado; o ex-apoiador não vê mais o nome, a unidade e o telefone do solicitante, e o solicitante não vê mais os do ex-apoiador (DC-10).
@@ -237,11 +239,13 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 - **A2 — Aviso de horário vencido (DC-05).** O horário passou e ninguém aceitou. O bot avisa o solicitante uma vez, por exemplo: "Ninguém aceitou sua solicitação. Quer cancelar?" ⚠️, com o botão **Cancelar**. Se ele tocar, o sistema executa os passos 3 e 4, com origem bot. Se não tocar, a solicitação continua Aberta (DC-03), e o bot não avisa de novo.
 - **A3 — Rótulo no webapp (DC-03).** Na lista das próprias solicitações, o solicitante vê o rótulo "Horário passou, ninguém aceitou", com o botão **Cancelar** ao lado. Ao tocar, segue o fluxo principal a partir da confirmação do passo 2.
 - **A4 — Alguém aceitou enquanto o solicitante decidia.** A solicitação estava Aberta quando ele a abriu e ficou Aceita antes do toque em Cancelar. O cancelamento continua valendo, porque Aceita também pode ser cancelada, e o novo apoiador é avisado no passo 4.
+- **A5 — Volta na confirmação.** No passo 2, no webapp, o solicitante toca em Voltar ou sai da tela. Nada muda.
 
 **Exceções:**
 - **E1 — A solicitação já terminou** (Concluída ou Cancelada). O sistema recusa e informa o status final (P-02).
 - **E2 — O morador não é o solicitante.** O sistema recusa (P-02: só o solicitante cancela).
 - **EB-1 e EB-2** (seção 1), nos fluxos A1 e A2.
+- No webapp, a exceção E1 é conferida quando o solicitante confirma (passo 2), porque a solicitação pode ter terminado entre os dois toques (por exemplo, concluída pelo bot). Se alguém aceitou nesse intervalo, vale a A4.
 
 **Pós-condições:**
 - Sucesso: a solicitação está Cancelada e não muda mais; a Transição foi registrada; o apoiador, se havia, foi avisado; nenhum dos dois vê mais o contato do outro (DC-10).
@@ -274,6 +278,7 @@ Não existe avaliação entre moradores depois da conclusão (D-01, RC-11).
 - **A1 — Pergunta do bot (DC-04).** O horário passou e a solicitação continua Aceita. O bot pergunta ao solicitante uma vez, por exemplo: "A ajuda foi feita?" ⚠️, com o botão **Sim, foi feita**. Se ele tocar, o sistema executa os passos 3 e 4, com origem bot. A pergunta já é a confirmação: o bot não pede outra (DC-12).
 - **A2 — Rótulos no webapp (DC-04).** Depois do horário, o solicitante vê "Falta concluir" e o apoiador vê "Aguardando quem pediu concluir". O solicitante pode concluir pelo fluxo principal.
 - **A3 — O solicitante não responde.** A solicitação continua Aceita. O bot não pergunta de novo, e o sistema não conclui sozinho (DC-04).
+- **A4 — Volta na confirmação.** No passo 2, no webapp, o solicitante toca em Voltar ou sai da tela. Nada muda.
 
 **Exceções:**
 - **E1 — A solicitação está Aberta** (ninguém aceitou). Não há ajuda a confirmar. O sistema recusa (P-02).
