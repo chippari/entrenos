@@ -78,6 +78,8 @@ Leitura: a seta com triângulo (Solicitante → Morador e Apoiador → Morador) 
 | DC-04 | Se a solicitação foi aceita e o solicitante não confirma a conclusão, ela **continua Aceita**. Depois do horário, o bot **pergunta uma vez** ao solicitante se a ajuda foi feita. O webapp mostra rótulos para os dois lados. **O sistema nunca conclui sozinho.** | Só o solicitante conclui (P-02, ADR-11). Uma pergunta basta para começar. | (a) Perguntar várias vezes: duas regras a mais (quantas vezes e quando parar) sem saber se fazem falta. (b) Concluir automaticamente: muda a P-02. |
 | DC-05 | Se o horário passou e ninguém aceitou, o bot **avisa o solicitante uma vez**, com um botão para cancelar. Vale também quando o apoiador desiste depois do horário (UC-03, A2). | Deixa claro que a solicitação acabou sem apoiador, sem tirar a decisão da pessoa (P-02). | (a) Cancelamento automático: muda a P-02. (b) Só o rótulo no webapp: quem não abre o webapp não fica sabendo. |
 | DC-06 | O **admin da comunidade também cria e aceita solicitações**, como qualquer morador, desde que o vínculo dele esteja ativo. | O admin também mora na comunidade. O papel fica no Vínculo (MD-02), e proibir exigiria uma regra a mais. | O admin só administra e não pede nem oferece ajuda. |
+| DC-07 | Existe uma sétima categoria, **Outra ajuda**, para pedidos que não cabem nas outras seis. Quem pede explica o pedido na descrição. O aviso segue a DC-01: é avisado quem marcou no perfil que oferece Outra ajuda e está disponível no horário (ADR-34). | Sem ela, o pedido diferente não tem lugar, e a pessoa desiste ou escolhe uma categoria errada, que avisa as pessoas erradas. | (a) Manter seis categorias: a pessoa fica sem saída. (b) Categoria em texto livre: não casa com o perfil, e ninguém seria avisado. (c) O admin cria categorias: telas e regras que nenhum RF prevê. |
+| DC-08 | O **nome** de quem pediu segue a regra da unidade e do telefone: só o apoiador vê, e só depois do aceite. Nunca aparece na lista, no aviso nem no detalhe antes do aceite (ADR-34). | Um pedido como "vou viajar no fim de semana", junto com o nome, mostra a toda a comunidade quem vai deixar o apartamento vazio. Reforça a P-04 sem mudá-la. | (a) Nome sempre visível: expõe quem pede, como no exemplo da viagem. (b) Só o primeiro nome na lista: ainda identifica a pessoa numa comunidade pequena. |
 
 ## 5. Rótulos de exibição
 
@@ -104,11 +106,11 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 
 **Fluxo principal:**
 1. O morador escolhe em qual comunidade vai pedir ajuda, se tiver vínculo em mais de uma (RF22).
-2. Ele informa título, descrição, categoria, data e horário.
+2. Ele informa título, descrição, categoria, data e horário. Junto do formulário, o sistema mostra o que não pode ser pedido e os números de emergência (ADR-34).
 3. Ele confirma.
 4. O sistema confere os dados.
 5. O sistema cria a solicitação do tipo normal, como **Aberta**, sem apoiador.
-6. O sistema avisa os moradores escolhidos pela DC-01. O aviso traz título, categoria, data e horário, mas nunca a unidade nem o telefone do solicitante (RC-10). No Telegram, o aviso vem com o botão **Aceitar**.
+6. O sistema avisa os moradores escolhidos pela DC-01. O aviso traz título, categoria, data e horário, mas nunca o nome, a unidade nem o telefone do solicitante (RC-10, DC-08). No Telegram, o aviso vem com o botão **Aceitar**.
 7. O sistema mostra a solicitação ao morador, com o status Aberta.
 
 **Fluxos alternativos:**
@@ -116,7 +118,7 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 
 **Exceções:**
 - **E1 — Dado obrigatório faltando.** O sistema não cria a solicitação e diz qual dado falta (RF05).
-- **E2 — Categoria fora das seis categorias fixas.** O sistema não cria a solicitação e diz o motivo (RF05).
+- **E2 — Categoria fora das sete categorias fixas** (D-03, DC-07). O sistema não cria a solicitação e diz o motivo (RF05).
 - **E3 — Data e horário já passaram.** O sistema não cria a solicitação e diz o motivo. Nenhum RF cita esta regra; ela entrou neste bloco porque, sem ela, a solicitação nasceria vencida (DC-03).
 - **E4 — Vínculo não está ativo** (suspenso ou removido) nessa comunidade. O sistema não cria a solicitação (P-07).
 - **E5 — Comunidade não está ativa** (pendente ou reprovada). O sistema não cria a solicitação (P-07, RC-06).
@@ -125,7 +127,7 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 - Sucesso: existe uma solicitação Aberta nessa comunidade, sem apoiador, e os moradores escolhidos pela DC-01 foram avisados.
 - Exceção: nada foi criado e ninguém foi avisado.
 
-**Rastreabilidade (acréscimo do projeto):** RF04, RF05, RF06, RF07, RF22, RNF01 (RNF-US-01 em `docs/specs/usabilidade.md`) · RC-01, RC-06, RC-09, RC-10 · P-03, P-04, P-07 · DC-01, DC-06.
+**Rastreabilidade (acréscimo do projeto):** RF04, RF05, RF06, RF07, RF22, RNF01 (RNF-US-01 em `docs/specs/usabilidade.md`) · RC-01, RC-06, RC-09, RC-10 · P-03, P-04, P-07 · DC-01, DC-06, DC-07, DC-08.
 
 ---
 
@@ -142,19 +144,19 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 4. Ele não é o solicitante (RC-02).
 
 **Fluxo principal (webapp):**
-1. O morador abre a lista de solicitações abertas da comunidade. A lista não mostra unidade nem telefone de ninguém (RC-10).
-2. Ele escolhe uma solicitação.
+1. O morador abre a lista de solicitações abertas da comunidade. A lista não mostra nome, unidade nem telefone de ninguém (RC-10, DC-08).
+2. Ele escolhe uma solicitação e vê os detalhes, ainda sem nome, unidade nem telefone de quem pediu (DC-08).
 3. Ele toca em **Aceitar**.
-4. O sistema pede uma confirmação e avisa que, ao confirmar, ele passa a ver a unidade e o telefone do solicitante (RF-US-01).
+4. O sistema pede uma confirmação e avisa que, ao confirmar, ele passa a ver o nome, a unidade e o telefone do solicitante (RF-US-01).
 5. Ele confirma.
 6. O sistema muda a solicitação para **Aceita**, com esse morador como apoiador, e registra uma Transição da solicitação (de Aberta para Aceita, autor, origem webapp, data).
 7. O sistema avisa o solicitante.
-8. O sistema passa a mostrar ao apoiador a unidade e o telefone do solicitante (P-04).
+8. O sistema passa a mostrar ao apoiador o nome, a unidade e o telefone do solicitante (P-04, DC-08).
 
 **Fluxos alternativos:**
-- **A1 — Pelo bot.** O morador recebeu o aviso do UC-01 (passo 6) e toca em **Aceitar** na mensagem. O bot pede a mesma confirmação na própria mensagem e ele confirma (passos 4 e 5). O sistema executa os passos 6 a 8, com origem bot, e responde no chat com a unidade e o telefone do solicitante.
+- **A1 — Pelo bot.** O morador recebeu o aviso do UC-01 (passo 6) e toca em **Aceitar** na mensagem. O bot pede a mesma confirmação na própria mensagem e ele confirma (passos 4 e 5). O sistema executa os passos 6 a 8, com origem bot, e responde no chat com o nome, a unidade e o telefone do solicitante.
 - **A2 — Filtro por categoria.** No passo 1, o morador filtra a lista por categoria (RF06).
-- **A3 — Desiste na confirmação.** No passo 5, o morador não confirma: no webapp, toca em Voltar ou sai da tela; no bot, toca em Voltar ou não toca em Confirmar. Nada muda, e a unidade e o telefone do solicitante continuam ocultos (RF-US-02).
+- **A3 — Desiste na confirmação.** No passo 5, o morador não confirma: no webapp, toca em Voltar ou sai da tela; no bot, toca em Voltar ou não toca em Confirmar. Nada muda, e o nome, a unidade e o telefone do solicitante continuam ocultos (RF-US-02).
 
 **Exceções:**
 - **E1 — Outro morador aceitou antes**, mesmo que no mesmo instante e por outro canal (webapp ou bot). Só a primeira aceitação vale. O sistema recusa a segunda, informa que a solicitação já foi aceita, e nada muda (P-01, RF09).
@@ -166,11 +168,11 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 - As exceções E1 a E5 e, no fluxo A1, as exceções EB-1 e EB-2 são conferidas quando o morador confirma (passo 5), porque a situação pode mudar entre o toque em Aceitar e a confirmação.
 
 **Pós-condições:**
-- Sucesso: a solicitação está Aceita, tem exatamente um apoiador, a Transição foi registrada, o solicitante foi avisado e só o apoiador vê a unidade e o telefone do solicitante.
+- Sucesso: a solicitação está Aceita, tem exatamente um apoiador, a Transição foi registrada, o solicitante foi avisado e só o apoiador vê o nome, a unidade e o telefone do solicitante.
 - Exceção: nada mudou.
-- Desistência na confirmação (A3): nada mudou, e a unidade e o telefone do solicitante não foram revelados.
+- Desistência na confirmação (A3): nada mudou, e o nome, a unidade e o telefone do solicitante não foram revelados.
 
-**Rastreabilidade (acréscimo do projeto):** RF06, RF08, RF09, RNF01 (RNF-US-02; RF-US-01 e RF-US-02 em `docs/specs/usabilidade.md`), RNF05 · RC-01, RC-02, RC-09, RC-10 · P-01, P-02, P-04, P-05, P-07 · DC-03, DC-06.
+**Rastreabilidade (acréscimo do projeto):** RF06, RF08, RF09, RNF01 (RNF-US-02; RF-US-01 e RF-US-02 em `docs/specs/usabilidade.md`), RNF05 · RC-01, RC-02, RC-09, RC-10 · P-01, P-02, P-04, P-05, P-07 · DC-03, DC-06, DC-08.
 
 ---
 
@@ -190,7 +192,7 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 3. O sistema volta a solicitação para **Aberta**, sem apoiador (RC-03), e registra uma Transição da solicitação (de Aceita para Aberta, autor, origem webapp, data).
 4. O sistema avisa o solicitante.
 5. O sistema avisa de novo os moradores escolhidos pela DC-01, sem avisar quem desistiu (DC-02).
-6. O morador que desistiu deixa de ver a unidade e o telefone do solicitante (P-04).
+6. O morador que desistiu deixa de ver o nome, a unidade e o telefone do solicitante (P-04, DC-08).
 
 **Fluxos alternativos:**
 - **A1 — Pelo bot.** O apoiador toca em **Desistir** numa mensagem do bot. O sistema executa os passos 3 a 6, com origem bot.
@@ -202,10 +204,10 @@ Rótulos são textos que o webapp mostra conforme o status e a data. **Não são
 - **EB-1 e EB-2** (seção 1), no fluxo A1.
 
 **Pós-condições:**
-- Sucesso: a solicitação está Aberta, sem apoiador; a Transição foi registrada; o solicitante foi avisado; o ex-apoiador não vê mais a unidade e o telefone.
+- Sucesso: a solicitação está Aberta, sem apoiador; a Transição foi registrada; o solicitante foi avisado; o ex-apoiador não vê mais o nome, a unidade e o telefone.
 - Exceção: nada mudou.
 
-**Rastreabilidade (acréscimo do projeto):** RF10 · RC-03, RC-09, RC-10 · P-02, P-04, P-05 · DC-02, DC-03, DC-05.
+**Rastreabilidade (acréscimo do projeto):** RF10 · RC-03, RC-09, RC-10 · P-02, P-04, P-05 · DC-02, DC-03, DC-05, DC-08.
 
 ---
 
@@ -289,7 +291,7 @@ Não mudam os fluxos acima, mas precisam de resposta na spec ou nos mockups.
 - Como o sistema sabe que já perguntou (DC-04) ou já avisou (DC-05), para fazer isso uma vez só. Talvez exija um dado novo na Solicitação, o que mexeria no modelo.
 - Quem não usa Telegram: a pergunta da DC-04 e o aviso da DC-05 também vão por e-mail, com um link para o webapp? (RF24)
 - Vínculo suspenso ou removido depois de criar ou aceitar: a pessoa ainda pode cancelar, desistir ou concluir? (efeitos da suspensão, RF17)
-- Depois que a solicitação é Cancelada ou Concluída, o ex-apoiador continua vendo a unidade e o telefone do solicitante? (P-04)
+- Depois que a solicitação é Cancelada ou Concluída, o ex-apoiador continua vendo o nome, a unidade e o telefone do solicitante? (P-04, DC-08)
 - O que o solicitante vê do apoiador quando é avisado da aceitação (nome? contato?).
 - O solicitante pode concluir antes do horário marcado, se a ajuda já aconteceu?
 - Texto da resposta do bot na EB-2.
