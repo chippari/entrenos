@@ -69,7 +69,7 @@ Princípios que nenhuma task pode violar. Todo agente e todo humano lê este arq
 |---|---|---|
 | D-01 | Não existe avaliação entre moradores. Só existe denúncia. | ADR-13 |
 | D-02 | Mensageria só por API oficial (Telegram Bot API). Nada de bibliotecas não oficiais. | ADR-20 |
-| D-03 | Seis categorias fixas: receber encomendas, regar plantas, pequenas compras, auxílio com tecnologia, companhia, auxílio visual. Fora do escopo: serviços pagos, pagamentos, empréstimo ou transferência de dinheiro, orientação médica, transporte de pessoas, cuidado de crianças, emergências e atividades de risco ou que exigem profissional. | Documentos da matéria |
+| D-03 | Sete categorias fixas: receber encomendas, regar plantas, pequenas compras, auxílio com tecnologia, companhia, auxílio visual e outra ajuda (quem pede explica o pedido na descrição). Fora do escopo: serviços pagos, pagamentos, empréstimo ou transferência de dinheiro, orientação médica, transporte de pessoas, cuidado de crianças, emergências e atividades de risco ou que exigem profissional. | Documentos da matéria; "outra ajuda": ADR-34 |
 
 **Verificação:** revisão de todo PR. Reverter qualquer item exige ADR novo.
 
