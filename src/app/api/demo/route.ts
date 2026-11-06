@@ -11,7 +11,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type { Mensageiro } from "@/portas/mensageiro";
 
 // Demonstração temporária da apresentação. A rota só lê a sessão, traduz a entrada,
-// monta o repositório (e, na criação, o mensageiro) e chama um caso de uso (ARQ-03); as regras ficam em casos-de-uso/demo/.
+// monta o repositório (e, na criação e nas mudanças, o mensageiro) e chama um caso de uso (ARQ-03); as regras ficam em casos-de-uso/demo/.
 export const dynamic = "force-dynamic";
 
 const ACOES: AcaoNaSolicitacao[] = ["aceitar", "desistir", "cancelar", "concluir"];
@@ -26,7 +26,7 @@ function dependencias(): DependenciasDaDemo {
   return { repositorio: criarRepositorioDaDemoSupabase(createAdminClient()), agora: new Date() };
 }
 
-// P-08: o token vem só do ambiente do servidor. Sem ele, o pedido é criado do mesmo jeito:
+// P-08: o token vem só do ambiente do servidor. Sem ele, o pedido é criado ou muda do mesmo jeito:
 // o caso de uso recebe um mensageiro que não envia nada.
 function mensageiroDoAviso(): Mensageiro {
   const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -59,7 +59,9 @@ export async function POST(request: Request) {
   const acao = ACOES.find((valor) => valor === corpo?.acao);
   const id = texto(corpo?.id);
   if (!acao || !id || !UUID.test(id)) return responder({ status: 400, corpo: { motivo: "pedido_invalido" } });
-  return responder(await mudarPedidoDaDemo(eu, acao, id, texto(corpo?.apoiadorVistoId), dependencias()));
+  return responder(
+    await mudarPedidoDaDemo(eu, acao, id, texto(corpo?.apoiadorVistoId), { ...dependencias(), mensageiro: mensageiroDoAviso() }),
+  );
 }
 
 export async function DELETE() {

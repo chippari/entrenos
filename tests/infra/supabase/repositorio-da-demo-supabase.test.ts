@@ -305,6 +305,37 @@ describe("criarRepositorioDaDemoSupabase", () => {
     expect(chats).toEqual([]);
   });
 
+  it("deve devolver o chat do Telegram do morador, lendo só a coluna chat_telegram", async () => {
+    // Atende a Issue #68 e P-04 (a consulta do aviso não traz nome, unidade nem telefone)
+    // ARRANGE
+    const falso = criarClienteFalso({ data: { chat_telegram: 111111 }, error: null });
+
+    // ACT
+    const chat = await falso.repositorio.chatDoMorador(USUARIO_1);
+
+    // ASSERT
+    expect(falso.from).toHaveBeenCalledWith("demo_moradores");
+    expect(falso.select).toHaveBeenCalledWith("chat_telegram");
+    expect(falso.eq).toHaveBeenCalledWith("usuario_id", USUARIO_1);
+    expect(falso.maybeSingle).toHaveBeenCalledTimes(1);
+    expect(chat).toBe(111111);
+  });
+
+  it.each([
+    ["o morador não tem chat cadastrado", { chat_telegram: null }],
+    ["não existe cadastro para o morador", null],
+  ])("deve devolver null como chat quando %s", async (_caso, linha) => {
+    // Atende a Issue #68 (solicitante sem chat_telegram não recebe nada)
+    // ARRANGE
+    const falso = criarClienteFalso({ data: linha, error: null });
+
+    // ACT
+    const chat = await falso.repositorio.chatDoMorador(USUARIO_1);
+
+    // ASSERT
+    expect(chat).toBeNull();
+  });
+
   const CHAMADAS: [string, (repositorio: RepositorioDaDemo) => Promise<unknown>][] = [
     ["moradorPorId", (repositorio) => repositorio.moradorPorId(USUARIO_1)],
     ["listarPedidos", (repositorio) => repositorio.listarPedidos(30)],
@@ -328,6 +359,7 @@ describe("criarRepositorioDaDemoSupabase", () => {
     ],
     ["apagarTodos", (repositorio) => repositorio.apagarTodos()],
     ["chatsParaAviso", (repositorio) => repositorio.chatsParaAviso(USUARIO_1)],
+    ["chatDoMorador", (repositorio) => repositorio.chatDoMorador(USUARIO_1)],
   ];
 
   it.each(CHAMADAS)("deve rejeitar com o código, sem a mensagem do banco, quando %s recebe erro", async (_metodo, chamar) => {

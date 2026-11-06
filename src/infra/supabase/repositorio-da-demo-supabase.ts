@@ -126,5 +126,14 @@ export function criarRepositorioDaDemoSupabase(cliente: SupabaseClient): Reposit
       );
       return (data as { chat_telegram: number }[]).map((linha) => linha.chat_telegram);
     },
+
+    // P-04: só a coluna do chat, como em chatsParaAviso.
+    async chatDoMorador(moradorId) {
+      const { data } = conferir(
+        await cliente.from("demo_moradores").select("chat_telegram").eq("usuario_id", moradorId).maybeSingle(),
+        "ler o chat do morador",
+      );
+      return (data as { chat_telegram: number | null } | null)?.chat_telegram ?? null;
+    },
   };
 }

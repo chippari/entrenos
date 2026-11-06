@@ -41,4 +41,6 @@ export interface RepositorioDaDemo {
   apagarTodos(): Promise<void>;
   // Os chats do Telegram cadastrados dos outros moradores. P-04: só o chat, sem nenhum dado do morador.
   chatsParaAviso(excetoMoradorId: string): Promise<number[]>;
+  // O chat do Telegram cadastrado de um morador; null = sem chat ou sem cadastro. P-04: só o chat.
+  chatDoMorador(moradorId: string): Promise<number | null>;
 }
