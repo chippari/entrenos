@@ -12,7 +12,7 @@
 |---|---|---|---|
 | 1 | Meus pedidos, aba "Eu ajudo" | UC-05 A2 (rótulo do apoiador); RF12 (histórico) | DC-04 (rótulo); RC-10 (lista sem contato de ninguém); RU-05 (status com ícone e palavra); DT-09, DT-10, DT-18, DT-19, DT-23 |
 | 2 | Pedido que vou ajudar | UC-02, passo 8 (lado do apoiador); UC-03, passos 1 e 2 | P-04, DC-08 e RC-10 (contato de quem pediu); DC-10 (só enquanto Aceita); RF22 (comunidade); DC-04 (variação com o horário passado, só em texto); DT-20, DT-21, DT-22, DT-23 |
-| 3 | Confirmar a desistência | UC-03, passo 2 | DC-10; DT-12, DT-15, DT-21 |
+| 3 | Confirmar a desistência | UC-03, passo 2; A3 (Voltar) | DC-10; DT-12, DT-15, DT-21 |
 | 4 | Você desistiu do pedido | UC-03, passos 3 a 6; A2 | DC-02 (sem afirmar novo aviso aos vizinhos); DC-10 |
 | 5 | Este pedido foi cancelado | UC-03, E1 | Modelo para as recusas sem tela própria |
 | 6 | Tema escuro | As telas 1 a 5 | RNF-US-03, RNF-US-04 (V2 da identidade visual) |
