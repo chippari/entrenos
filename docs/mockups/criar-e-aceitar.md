@@ -111,15 +111,14 @@ A E2 do UC-01 (categoria fora das sete) não tem texto de tela: no webapp, a cat
 | DT-02 | Na tela, a solicitação se chama "pedido" | É mais curto e do dia a dia. Os documentos técnicos continuam usando "solicitação" |
 | DT-03 | O aceite começa pelo detalhe do pedido, não por um botão na lista | Evita aceitar sem ler a descrição, e cabe nos 3 toques |
 | DT-04 | Filtros de categoria numa faixa que rola para o lado, sem barra de rolagem visível | Os sete filtros não cabem na largura; rolar não conta como toque; a barra de rolagem do navegador usaria cores fora da identidade visual |
-| DT-05 | Barra de navegação embaixo: Início, Meus pedidos e Perfil | Dá acesso fixo às três áreas principais. Meus pedidos e Perfil ainda não têm tela |
+| DT-05 | Barra de navegação embaixo: Início, Meus pedidos e Perfil | Dá acesso fixo às três áreas principais. Meus pedidos está em `docs/mockups/meus-pedidos.md` (Issue #43); Perfil ainda não tem tela |
 | DT-06 | Data e horário aparecem como texto no mockup | O componente de escolha de data e hora é decidido na spec e no código |
-| DT-07 | A tela de pedido publicado não tem botão Cancelar | Cancelar é o UC-04, desenhado em outra Issue |
+| DT-07 | A tela de pedido publicado não tem botão Cancelar | Cancelar é o UC-04, desenhado em `docs/mockups/meus-pedidos.md` (Issue #43) |
 | DT-08 | O próprio pedido não aparece em "Pedidos dos vizinhos"; ele fica em "Meus pedidos" | A lista é de pedidos que a pessoa pode aceitar. Mostrar o próprio pedido ali convidaria a uma ação sempre recusada (UC-02 E4) |
 
 ## Pendências
 
-- Telas do UC-03 a UC-05 (desistir, cancelar, concluir) e dos rótulos de exibição: outra Issue.
-- Tela do solicitante com o nome, a unidade e o telefone do apoiador depois do aceite (DC-09, DC-10).
-- Telas de Meus pedidos e de Perfil (inclui marcar "Outra ajuda" entre as ajudas oferecidas).
+- Cancelar, concluir, Meus pedidos (aba "Eu pedi"), os rótulos do solicitante e a tela do solicitante com o contato do apoiador: `docs/mockups/meus-pedidos.md` (Issue #43).
+- Desistir, a aba "Eu ajudo" e o rótulo do apoiador: Issue do apoiador. Tela de Perfil (inclui marcar "Outra ajuda" entre as ajudas oferecidas).
 - Catálogo de mensagens do bot: avisos, confirmação no bot (RF-US-01 e RNF-US-02 no bot) e RNF-US-12.
 - Conferir na tela real os RNF-US-05, RNF-US-06, RNF-US-09 e RNF-US-11, e o foco do teclado (RU-01 da identidade visual).

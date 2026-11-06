@@ -19,7 +19,7 @@ Convenções:
 - **Exceções comuns do bot**, que valem para todo fluxo alternativo feito pelo bot:
   - **EB-1 — Chat não conectado.** O chat do Telegram não está ligado a nenhum usuário. O sistema não executa nenhuma ação e só responde com as instruções de como conectar a conta (P-05, RB-TW-01).
   - **EB-2 — Sem vínculo ativo.** O chat está ligado a um usuário, mas ele não tem vínculo ativo na comunidade da solicitação. O sistema não executa nenhuma ação (P-05). ⚠️ O texto da resposta ainda não foi definido.
-- Textos de mensagens e de rótulos que aparecem entre aspas são **exemplos** ⚠️. O texto final será decidido nos mockups e no catálogo de mensagens do bot.
+- Textos de mensagens e de rótulos que aparecem entre aspas são **exemplos** ⚠️, exceto os rótulos já aprovados na seção 5. O texto final será decidido nos mockups e no catálogo de mensagens do bot.
 
 ## 2. Atores
 
@@ -89,11 +89,11 @@ Leitura: a seta com triângulo (Solicitante → Morador e Apoiador → Morador) 
 
 Rótulos são textos que o webapp mostra conforme o status e a data. **Não são status.** A máquina de estados continua com Aberta, Aceita, Concluída e Cancelada.
 
-| Rótulo (exemplo ⚠️) | Quem vê | Quando aparece | Decisão |
+| Rótulo | Quem vê | Quando aparece | Decisão |
 |---|---|---|---|
-| "Horário passou, ninguém aceitou" | Solicitante | Solicitação Aberta, com o horário já passado | DC-03 |
-| "Aguardando sua confirmação" | Solicitante | Solicitação Aceita, com o horário já passado | DC-04 |
-| "Aguardando confirmação do solicitante" | Apoiador | Solicitação Aceita, com o horário já passado | DC-04 |
+| "Horário passou, ninguém aceitou" | Solicitante | Solicitação Aberta, com o horário já passado | DC-03; texto aprovado em `docs/mockups/meus-pedidos.md` |
+| "Falta concluir" | Solicitante | Solicitação Aceita, com o horário já passado | DC-04; texto aprovado na DT-13 de `docs/mockups/meus-pedidos.md` |
+| "Aguardando confirmação do solicitante" (exemplo ⚠️) | Apoiador | Solicitação Aceita, com o horário já passado | DC-04 |
 
 ## 6. Casos de uso
 
@@ -272,7 +272,7 @@ Não existe avaliação entre moradores depois da conclusão (D-01, RC-11).
 
 **Fluxos alternativos:**
 - **A1 — Pergunta do bot (DC-04).** O horário passou e a solicitação continua Aceita. O bot pergunta ao solicitante uma vez, por exemplo: "A ajuda foi feita?" ⚠️, com o botão **Sim, foi feita**. Se ele tocar, o sistema executa os passos 3 e 4, com origem bot. A pergunta já é a confirmação: o bot não pede outra (DC-12).
-- **A2 — Rótulos no webapp (DC-04).** Depois do horário, o solicitante vê "Aguardando sua confirmação" e o apoiador vê "Aguardando confirmação do solicitante". O solicitante pode concluir pelo fluxo principal.
+- **A2 — Rótulos no webapp (DC-04).** Depois do horário, o solicitante vê "Falta concluir" e o apoiador vê "Aguardando confirmação do solicitante". O solicitante pode concluir pelo fluxo principal.
 - **A3 — O solicitante não responde.** A solicitação continua Aceita. O bot não pergunta de novo, e o sistema não conclui sozinho (DC-04).
 
 **Exceções:**
@@ -293,7 +293,7 @@ Não existe avaliação entre moradores depois da conclusão (D-01, RC-11).
 
 Não mudam os fluxos acima, mas precisam de resposta na spec ou nos mockups.
 
-- Textos exatos dos avisos, das perguntas do bot e dos rótulos (mockups e catálogo de mensagens).
+- Textos exatos dos avisos, das perguntas do bot e do rótulo do apoiador (mockups do apoiador e catálogo de mensagens). Os rótulos do solicitante estão em `docs/mockups/meus-pedidos.md`.
 - Como o sistema sabe que já perguntou (DC-04) ou já avisou (DC-05), para fazer isso uma vez só. Talvez exija um dado novo na Solicitação, o que mexeria no modelo.
 - Quem não usa Telegram: a pergunta da DC-04 e o aviso da DC-05 também vão por e-mail, com um link para o webapp? (RF24)
 - Vínculo suspenso ou removido depois de criar ou aceitar: a pessoa ainda pode cancelar, desistir ou concluir? (efeitos da suspensão, RF17)
