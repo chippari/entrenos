@@ -11,7 +11,11 @@ export class RepositorioDaDemoFake implements RepositorioDaDemo {
   private pedidos: PedidoDaDemo[] = [];
   private proximoId = 1;
 
-  constructor(private readonly moradores: Morador[] = []) {}
+  // chatsTelegram: o chat de cada morador, pelo id; null ou ausente = morador sem chat cadastrado.
+  constructor(
+    private readonly moradores: Morador[] = [],
+    private readonly chatsTelegram: Record<string, number | null> = {},
+  ) {}
 
   async moradorPorId(id: string): Promise<Morador | null> {
     return this.moradores.find((morador) => morador.id === id) ?? null;
@@ -26,8 +30,10 @@ export class RepositorioDaDemoFake implements RepositorioDaDemo {
     return this.pedidos.length;
   }
 
-  async criarPedido(dados: NovoPedidoDaDemo): Promise<void> {
-    this.pedidos.push({ ...dados, id: `pedido-${this.proximoId++}`, status: "aberta", apoiadorId: null });
+  async criarPedido(dados: NovoPedidoDaDemo): Promise<string> {
+    const id = `pedido-${this.proximoId++}`;
+    this.pedidos.push({ ...dados, id, status: "aberta", apoiadorId: null });
+    return id;
   }
 
   async lerPedido(id: string): Promise<PedidoDaDemo | null> {
@@ -47,6 +53,12 @@ export class RepositorioDaDemoFake implements RepositorioDaDemo {
 
   async apagarTodos(): Promise<void> {
     this.pedidos = [];
+  }
+
+  async chatsParaAviso(excetoMoradorId: string): Promise<number[]> {
+    return Object.entries(this.chatsTelegram)
+      .filter(([moradorId]) => moradorId !== excetoMoradorId)
+      .flatMap(([, chat]) => (chat === null ? [] : [chat]));
   }
 
   // Apoio aos testes: põe um pedido pronto no estado pedido e devolve uma cópia dele.
