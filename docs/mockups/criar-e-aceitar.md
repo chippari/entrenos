@@ -1,7 +1,7 @@
 # Mockups: criar e aceitar solicitação
 
 - Origem: Issue #36. Telas do UC-01 (criar) e do UC-02 (aceitar), mais a tela inicial com o seletor de comunidade.
-- Ferramenta: tipo Design do Claude.ai. Esta pasta guarda as imagens da versão aprovada em 05/11/2026.
+- Ferramenta: tipo Design do Claude.ai. Esta pasta guarda as imagens da versão aprovada em 05/11/2026. As imagens 06 e 09 foram atualizadas em 06/11/2026, na Issue #40 (DC-09 e DC-10).
 - Fontes: `docs/casos-de-uso/ciclo-da-solicitacao.md`, `docs/specs/usabilidade.md`, `docs/design/identidade-visual.md` e `docs/adr/ADR-34-categoria-outra-e-nome.md`.
 - Tamanho das telas: 390 px de largura. A largura de 320 px (RNF-US-06) é conferida na tela real.
 - Todo nome entre colchetes, como [Nome], marca onde entra o nome real. A comunidade e os contatos das telas são fictícios.
@@ -36,7 +36,7 @@
 ![Detalhe do pedido com o botão Aceitar e o aviso de que o contato aparece depois do aceite](criar-e-aceitar/05-pedido.png)
 
 ### 6. Confirmar o aceite
-![Pergunta Aceitar este pedido, com os botões Confirmar e Voltar](criar-e-aceitar/06-confirmar.png)
+![Pergunta Aceitar este pedido, com o aviso de que os dois passam a ver o contato um do outro enquanto o pedido estiver aceito, e os botões Confirmar e Voltar](criar-e-aceitar/06-confirmar.png)
 
 ### 7. Pedido aceito
 ![Pedido aceito, com o nome, a unidade e o botão para ligar para quem pediu](criar-e-aceitar/07-aceito.png)
@@ -119,6 +119,7 @@ A E2 do UC-01 (categoria fora das sete) não tem texto de tela: no webapp, a cat
 ## Pendências
 
 - Telas do UC-03 a UC-05 (desistir, cancelar, concluir) e dos rótulos de exibição: outra Issue.
+- Tela do solicitante com o nome, a unidade e o telefone do apoiador depois do aceite (DC-09, DC-10).
 - Telas de Meus pedidos e de Perfil (inclui marcar "Outra ajuda" entre as ajudas oferecidas).
 - Catálogo de mensagens do bot: avisos, confirmação no bot (RF-US-01 e RNF-US-02 no bot) e RNF-US-12.
 - Conferir na tela real os RNF-US-05, RNF-US-06, RNF-US-09 e RNF-US-11, e o foco do teclado (RU-01 da identidade visual).

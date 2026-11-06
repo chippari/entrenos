@@ -1,7 +1,7 @@
 # Spec: usabilidade e acessibilidade (RNF01 e RNF02)
 
 - Origem: decomposição do RNF01 ("criar/aceitar em até 3 toques") e do RNF02 ("leitor de tela, aumento de fonte, contraste") em critérios verificáveis, antes dos mockups (aula 3, A3 s.17 e s.25). Issue #32.
-- Decisões relacionadas: D1 a D7 da Issue #32. Casos de uso: UC-01 e UC-02 (`docs/casos-de-uso/ciclo-da-solicitacao.md`). Constituição: P-01, P-02, P-04 e P-05.
+- Decisões relacionadas: D1 a D7 da Issue #32. Casos de uso: UC-01 e UC-02 (`docs/casos-de-uso/ciclo-da-solicitacao.md`), com DC-09 e DC-10 (Issue #40). Constituição: P-01, P-02, P-04 e P-05.
 - Escopo: todas as telas do webapp e todas as mensagens do bot.
 - Fora do escopo: conformidade completa com a WCAG 2.2 nível AA; a acessibilidade do próprio aplicativo do Telegram; testes automáticos de acessibilidade; a identidade visual (paleta, fonte e ícones), que vem em outra Issue e precisa cumprir o RNF-US-03 e o RNF-US-04.
 
@@ -45,7 +45,7 @@
 
 | Cláusula | Onde se confere | Como |
 |---|---|---|
-| RF-US-01, RF-US-02 | Mockup e, depois, teste da tela e do bot | Fluxo de aceitar mostra a confirmação com o aviso; o caminho Voltar não muda nada |
+| RF-US-01, RF-US-02 | Mockup e, depois, teste da tela e do bot | Fluxo de aceitar mostra a confirmação com o aviso nos dois sentidos (quem aceita passa a ver o contato de quem pediu, e quem pediu passa a ver o de quem aceita); o caminho Voltar não muda nada |
 | RNF-US-01, RNF-US-02 | Mockup | Contar os toques em cada fluxo seguindo DEF-US-01 a DEF-US-04 e anotar o número no próprio mockup |
 | RNF-US-03, RNF-US-04 | Mockup e tela | Contraste calculado para cada par de cores da paleta, nos dois temas, numa tabela da identidade visual |
 | RNF-US-05 | Tela | Zoom do navegador em 200% e percorrer cada tela |
