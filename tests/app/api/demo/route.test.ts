@@ -23,7 +23,7 @@ const PEDIDO_ID = "00000000-0000-4000-8000-0000000000aa";
 const DEPENDENCIAS = { repositorio: expect.any(Object), agora: expect.any(Date) };
 // Valor FALSO. Nunca usar o token real nem ler .env*.
 const TOKEN = "123456:TOKEN_FALSO_DE_TESTE";
-// Stub: objeto marcado só para conferir que a rota repassa o mensageiro à criação.
+// Stub: objeto marcado só para conferir que a rota repassa o mensageiro à criação e às mudanças.
 const MENSAGEIRO = { nome: "mensageiro-falso" };
 const CASOS_DE_USO = [listarPedidosDaDemo, criarPedidoDaDemo, mudarPedidoDaDemo, limparDemo];
 
@@ -160,7 +160,10 @@ describe("/api/demo", () => {
     const resposta = await POST(requisicao("POST", corpo));
 
     // ASSERT
-    expect(mudarPedidoDaDemo).toHaveBeenCalledWith(USUARIO_DA_SESSAO, "concluir", PEDIDO_ID, OUTRO_USUARIO, DEPENDENCIAS);
+    expect(mudarPedidoDaDemo).toHaveBeenCalledWith(USUARIO_DA_SESSAO, "concluir", PEDIDO_ID, OUTRO_USUARIO, {
+      ...DEPENDENCIAS,
+      mensageiro: MENSAGEIRO,
+    });
     expect(resposta.status).toBe(409);
     expect(await resposta.json()).toEqual({ motivo: "ja_aceita" });
   });
@@ -174,7 +177,46 @@ describe("/api/demo", () => {
     await POST(requisicao("POST", corpo));
 
     // ASSERT
-    expect(mudarPedidoDaDemo).toHaveBeenCalledWith(USUARIO_DA_SESSAO, "aceitar", PEDIDO_ID, null, DEPENDENCIAS);
+    expect(mudarPedidoDaDemo).toHaveBeenCalledWith(USUARIO_DA_SESSAO, "aceitar", PEDIDO_ID, null, {
+      ...DEPENDENCIAS,
+      mensageiro: MENSAGEIRO,
+    });
+  });
+
+  it("deve montar o mensageiro do Telegram com o token do ambiente quando chega uma ação de mudança", async () => {
+    // Atende a Issue #68 e P-08 (o token vem só do ambiente do servidor)
+    // ARRANGE
+    const corpo = { acao: "aceitar", id: PEDIDO_ID };
+
+    // ACT
+    await POST(requisicao("POST", corpo));
+
+    // ASSERT
+    expect(criarMensageiroTelegram).toHaveBeenCalledWith({ token: TOKEN, fetch });
+  });
+
+  it("deve mudar o pedido com um mensageiro que não envia nada e registrar um único log quando chega uma ação de mudança e falta o token", async () => {
+    // Atende a Issue #68 (sem TELEGRAM_BOT_TOKEN, o aviso fica desligado e a mudança segue)
+    // ARRANGE
+    vi.stubEnv("TELEGRAM_BOT_TOKEN", undefined);
+    vi.mocked(mudarPedidoDaDemo).mockResolvedValue({ status: 200, corpo: { ok: true } });
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    // Spy na rede: confere que o mensageiro passado ao caso de uso não chama o fetch.
+    const fetchDaRede = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null));
+    const corpo = { acao: "aceitar", id: PEDIDO_ID };
+
+    // ACT
+    const resposta = await POST(requisicao("POST", corpo));
+
+    // ASSERT
+    expect(resposta.status).toBe(200);
+    expect(await resposta.json()).toEqual({ ok: true });
+    expect(criarMensageiroTelegram).not.toHaveBeenCalled();
+    expect(mudarPedidoDaDemo).toHaveBeenCalledTimes(1);
+    const { mensageiro } = vi.mocked(mudarPedidoDaDemo).mock.calls[0][4];
+    await expect(mensageiro.enviarTexto(4242, "texto de teste")).resolves.toBeUndefined();
+    expect(fetchDaRede).not.toHaveBeenCalled();
+    expect(consoleError.mock.calls).toEqual([["Aviso do Telegram desligado: TELEGRAM_BOT_TOKEN ausente"]]);
   });
 
   it.each([

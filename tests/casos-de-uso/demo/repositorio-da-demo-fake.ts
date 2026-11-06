@@ -61,6 +61,10 @@ export class RepositorioDaDemoFake implements RepositorioDaDemo {
       .flatMap(([, chat]) => (chat === null ? [] : [chat]));
   }
 
+  async chatDoMorador(moradorId: string): Promise<number | null> {
+    return this.chatsTelegram[moradorId] ?? null;
+  }
+
   // Apoio aos testes: põe um pedido pronto no estado pedido e devolve uma cópia dele.
   guardar(pedido: Partial<PedidoDaDemo> & Pick<PedidoDaDemo, "solicitanteId">): PedidoDaDemo {
     const completo: PedidoDaDemo = {
