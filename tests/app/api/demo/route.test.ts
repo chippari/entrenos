@@ -5,11 +5,13 @@ import { criarPedidoDaDemo } from "@/casos-de-uso/demo/criar-pedido-da-demo";
 import { limparDemo } from "@/casos-de-uso/demo/limpar-demo";
 import { listarPedidosDaDemo } from "@/casos-de-uso/demo/listar-pedidos-da-demo";
 import { mudarPedidoDaDemo } from "@/casos-de-uso/demo/mudar-pedido-da-demo";
+import { criarMensageiroTelegram } from "@/infra/telegram/mensageiro-telegram";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-// A rota só traduz a entrada (ARQ-03): a sessão, o cliente admin e os casos de uso são trocados por dublês.
+// A rota só traduz a entrada (ARQ-03): a sessão, o cliente admin, o mensageiro e os casos de uso são trocados por dublês.
 vi.mock("@/app/api/demo/sessao", () => ({ lerSessao: vi.fn() }));
 vi.mock("@/lib/supabase/admin", () => ({ createAdminClient: vi.fn() }));
+vi.mock("@/infra/telegram/mensageiro-telegram", () => ({ criarMensageiroTelegram: vi.fn() }));
 vi.mock("@/casos-de-uso/demo/listar-pedidos-da-demo", () => ({ listarPedidosDaDemo: vi.fn() }));
 vi.mock("@/casos-de-uso/demo/criar-pedido-da-demo", () => ({ criarPedidoDaDemo: vi.fn() }));
 vi.mock("@/casos-de-uso/demo/mudar-pedido-da-demo", () => ({ mudarPedidoDaDemo: vi.fn() }));
@@ -19,6 +21,10 @@ const USUARIO_DA_SESSAO = "00000000-0000-4000-8000-000000000001";
 const OUTRO_USUARIO = "00000000-0000-4000-8000-000000000002";
 const PEDIDO_ID = "00000000-0000-4000-8000-0000000000aa";
 const DEPENDENCIAS = { repositorio: expect.any(Object), agora: expect.any(Date) };
+// Valor FALSO. Nunca usar o token real nem ler .env*.
+const TOKEN = "123456:TOKEN_FALSO_DE_TESTE";
+// Stub: objeto marcado só para conferir que a rota repassa o mensageiro à criação.
+const MENSAGEIRO = { nome: "mensageiro-falso" };
 const CASOS_DE_USO = [listarPedidosDaDemo, criarPedidoDaDemo, mudarPedidoDaDemo, limparDemo];
 
 function requisicao(metodo: "POST" | "DELETE", corpo?: unknown): Request {
@@ -31,8 +37,10 @@ function requisicao(metodo: "POST" | "DELETE", corpo?: unknown): Request {
 describe("/api/demo", () => {
   beforeEach(() => {
     // Stubs: há sessão, e cada caso de uso (Mock) devolve uma resposta só dele.
+    vi.stubEnv("TELEGRAM_BOT_TOKEN", TOKEN);
     vi.mocked(lerSessao).mockResolvedValue(USUARIO_DA_SESSAO);
     vi.mocked(createAdminClient).mockReturnValue({} as ReturnType<typeof createAdminClient>);
+    vi.mocked(criarMensageiroTelegram).mockReturnValue(MENSAGEIRO as unknown as ReturnType<typeof criarMensageiroTelegram>);
     vi.mocked(listarPedidosDaDemo).mockResolvedValue({ status: 200, corpo: { pedidos: [] } });
     vi.mocked(criarPedidoDaDemo).mockResolvedValue({ status: 201, corpo: { ok: true } });
     vi.mocked(mudarPedidoDaDemo).mockResolvedValue({ status: 409, corpo: { motivo: "ja_aceita" } });
@@ -41,6 +49,8 @@ describe("/api/demo", () => {
 
   afterEach(() => {
     vi.resetAllMocks();
+    vi.restoreAllMocks();
+    vi.unstubAllEnvs();
   });
 
   it.each([
@@ -100,10 +110,45 @@ describe("/api/demo", () => {
         categoria: null,
         dataEHora: "2026-11-07T09:00",
       },
-      DEPENDENCIAS,
+      { ...DEPENDENCIAS, mensageiro: MENSAGEIRO },
     );
     expect(resposta.status).toBe(201);
     expect(await resposta.json()).toEqual({ ok: true });
+  });
+
+  it("deve montar o mensageiro do Telegram com o token do ambiente quando a ação é criar", async () => {
+    // Atende a Issue #66 e P-08 (o token vem só do ambiente do servidor)
+    // ARRANGE
+    const corpo = { acao: "criar", titulo: "Regar as plantas da varanda" };
+
+    // ACT
+    await POST(requisicao("POST", corpo));
+
+    // ASSERT
+    expect(criarMensageiroTelegram).toHaveBeenCalledWith({ token: TOKEN, fetch });
+  });
+
+  it("deve criar o pedido com um mensageiro que não envia nada e registrar um único log quando a ação é criar e falta o token", async () => {
+    // Atende a Issue #66 (sem TELEGRAM_BOT_TOKEN, o aviso fica desligado e a criação segue)
+    // ARRANGE
+    vi.stubEnv("TELEGRAM_BOT_TOKEN", undefined);
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    // Spy na rede: confere que o mensageiro passado ao caso de uso não chama o fetch.
+    const fetchDaRede = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null));
+    const corpo = { acao: "criar", titulo: "Regar as plantas da varanda" };
+
+    // ACT
+    const resposta = await POST(requisicao("POST", corpo));
+
+    // ASSERT
+    expect(resposta.status).toBe(201);
+    expect(await resposta.json()).toEqual({ ok: true });
+    expect(criarMensageiroTelegram).not.toHaveBeenCalled();
+    expect(criarPedidoDaDemo).toHaveBeenCalledTimes(1);
+    const { mensageiro } = vi.mocked(criarPedidoDaDemo).mock.calls[0][2];
+    await expect(mensageiro.enviarTexto(4242, "texto de teste")).resolves.toBeUndefined();
+    expect(fetchDaRede).not.toHaveBeenCalled();
+    expect(consoleError.mock.calls).toEqual([["Aviso do Telegram desligado: TELEGRAM_BOT_TOKEN ausente"]]);
   });
 
   it("deve mudar o pedido em nome do usuário da sessão e devolver o status do caso de uso quando chega uma ação", async () => {

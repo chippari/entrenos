@@ -33,9 +33,12 @@ export interface RepositorioDaDemo {
   // Os mais novos primeiro.
   listarPedidos(limite: number): Promise<PedidoDaDemo[]>;
   contarPedidos(): Promise<number>;
-  criarPedido(dados: NovoPedidoDaDemo): Promise<void>;
+  // Devolve o id do pedido criado.
+  criarPedido(dados: NovoPedidoDaDemo): Promise<string>;
   lerPedido(id: string): Promise<PedidoDaDemo | null>;
   // true = alguma linha mudou; false = o pedido não estava mais como foi lido.
   gravarTransicao(transicao: TransicaoDaDemo): Promise<boolean>;
   apagarTodos(): Promise<void>;
+  // Os chats do Telegram cadastrados dos outros moradores. P-04: só o chat, sem nenhum dado do morador.
+  chatsParaAviso(excetoMoradorId: string): Promise<number[]>;
 }

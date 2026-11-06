@@ -70,17 +70,22 @@ export function criarRepositorioDaDemoSupabase(cliente: SupabaseClient): Reposit
     },
 
     async criarPedido(dados) {
-      conferir(
-        await cliente.from("demo_pedidos").insert({
-          titulo: dados.titulo,
-          descricao: dados.descricao,
-          categoria: dados.categoria,
-          data_e_hora: dados.dataEHora,
-          solicitante: dados.solicitanteId,
-          status: "aberta",
-        }),
+      const { data } = conferir(
+        await cliente
+          .from("demo_pedidos")
+          .insert({
+            titulo: dados.titulo,
+            descricao: dados.descricao,
+            categoria: dados.categoria,
+            data_e_hora: dados.dataEHora,
+            solicitante: dados.solicitanteId,
+            status: "aberta",
+          })
+          .select("id")
+          .single(),
         "criar o pedido",
       );
+      return (data as { id: string }).id;
     },
 
     async lerPedido(id) {
@@ -107,6 +112,19 @@ export function criarRepositorioDaDemoSupabase(cliente: SupabaseClient): Reposit
     async apagarTodos() {
       // O supabase-js exige um filtro no delete; este vale para todas as linhas.
       conferir(await cliente.from("demo_pedidos").delete().not("id", "is", null), "apagar os pedidos");
+    },
+
+    // P-04: só a coluna do chat; nome, unidade e telefone não saem do banco para o aviso.
+    async chatsParaAviso(excetoMoradorId) {
+      const { data } = conferir(
+        await cliente
+          .from("demo_moradores")
+          .select("chat_telegram")
+          .neq("usuario_id", excetoMoradorId)
+          .not("chat_telegram", "is", null),
+        "ler os chats para o aviso",
+      );
+      return (data as { chat_telegram: number }[]).map((linha) => linha.chat_telegram);
     },
   };
 }

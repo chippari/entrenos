@@ -39,7 +39,19 @@ const ERRO_PERMISSAO = {
   hint: null,
 };
 
-const METODOS_DA_CONSULTA = ["select", "insert", "update", "delete", "eq", "not", "order", "limit", "maybeSingle"] as const;
+const METODOS_DA_CONSULTA = [
+  "select",
+  "insert",
+  "update",
+  "delete",
+  "eq",
+  "neq",
+  "not",
+  "order",
+  "limit",
+  "single",
+  "maybeSingle",
+] as const;
 
 // Stub do cliente Supabase: resposta configurável, sem banco nem rede. Como a consulta do supabase-js,
 // cada método devolve a própria consulta, e ela resolve com o resultado quando é esperada (await).
@@ -131,13 +143,13 @@ describe("criarRepositorioDaDemoSupabase", () => {
     expect(total).toBe(0);
   });
 
-  it("deve inserir o pedido aberto com o solicitante quando um pedido é criado", async () => {
-    // Atende P-02 (todo pedido nasce aberta)
+  it("deve inserir o pedido aberto com o solicitante e devolver o id dele quando um pedido é criado", async () => {
+    // Atende P-02 (todo pedido nasce aberta) e a Issue #66 (o id identifica o pedido no log do aviso)
     // ARRANGE
-    const falso = criarClienteFalso({ data: null, error: null });
+    const falso = criarClienteFalso({ data: { id: PEDIDO_ID }, error: null });
 
     // ACT
-    await falso.repositorio.criarPedido({
+    const id = await falso.repositorio.criarPedido({
       titulo: "Regar as plantas da varanda",
       descricao: "São três vasos pequenos.",
       categoria: "regar_plantas",
@@ -155,6 +167,9 @@ describe("criarRepositorioDaDemoSupabase", () => {
       solicitante: USUARIO_1,
       status: "aberta",
     });
+    expect(falso.select).toHaveBeenCalledWith("id");
+    expect(falso.single).toHaveBeenCalledTimes(1);
+    expect(id).toBe(PEDIDO_ID);
   });
 
   it("deve devolver o pedido quando ele existe", async () => {
@@ -262,6 +277,34 @@ describe("criarRepositorioDaDemoSupabase", () => {
     expect(falso.not).toHaveBeenCalledWith("id", "is", null);
   });
 
+  it("deve devolver os chats do Telegram dos outros moradores, lendo só a coluna chat_telegram", async () => {
+    // Atende a Issue #66 e P-04 (a consulta do aviso não traz nome, unidade nem telefone)
+    // ARRANGE
+    const falso = criarClienteFalso({ data: [{ chat_telegram: 222222 }, { chat_telegram: 333333 }], error: null });
+
+    // ACT
+    const chats = await falso.repositorio.chatsParaAviso(USUARIO_1);
+
+    // ASSERT
+    expect(falso.from).toHaveBeenCalledWith("demo_moradores");
+    expect(falso.select).toHaveBeenCalledWith("chat_telegram");
+    expect(falso.neq).toHaveBeenCalledWith("usuario_id", USUARIO_1);
+    expect(falso.not).toHaveBeenCalledWith("chat_telegram", "is", null);
+    expect(chats).toEqual([222222, 333333]);
+  });
+
+  it("deve devolver lista vazia quando nenhum outro morador tem chat cadastrado", async () => {
+    // Atende a Issue #66 (morador sem chat_telegram não recebe nada)
+    // ARRANGE
+    const falso = criarClienteFalso({ data: [], error: null });
+
+    // ACT
+    const chats = await falso.repositorio.chatsParaAviso(USUARIO_1);
+
+    // ASSERT
+    expect(chats).toEqual([]);
+  });
+
   const CHAMADAS: [string, (repositorio: RepositorioDaDemo) => Promise<unknown>][] = [
     ["moradorPorId", (repositorio) => repositorio.moradorPorId(USUARIO_1)],
     ["listarPedidos", (repositorio) => repositorio.listarPedidos(30)],
@@ -284,6 +327,7 @@ describe("criarRepositorioDaDemoSupabase", () => {
         repositorio.gravarTransicao({ id: PEDIDO_ID, statusLido: "aberta", novoStatus: "aceita", novoApoiadorId: USUARIO_2 }),
     ],
     ["apagarTodos", (repositorio) => repositorio.apagarTodos()],
+    ["chatsParaAviso", (repositorio) => repositorio.chatsParaAviso(USUARIO_1)],
   ];
 
   it.each(CHAMADAS)("deve rejeitar com o código, sem a mensagem do banco, quando %s recebe erro", async (_metodo, chamar) => {

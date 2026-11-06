@@ -6,10 +6,12 @@ import { listarPedidosDaDemo } from "@/casos-de-uso/demo/listar-pedidos-da-demo"
 import { mudarPedidoDaDemo } from "@/casos-de-uso/demo/mudar-pedido-da-demo";
 import type { AcaoNaSolicitacao } from "@/dominio/solicitacao/maquina-de-estados";
 import { criarRepositorioDaDemoSupabase } from "@/infra/supabase/repositorio-da-demo-supabase";
+import { criarMensageiroTelegram } from "@/infra/telegram/mensageiro-telegram";
 import { createAdminClient } from "@/lib/supabase/admin";
+import type { Mensageiro } from "@/portas/mensageiro";
 
 // Demonstração temporária da apresentação. A rota só lê a sessão, traduz a entrada,
-// monta o repositório e chama um caso de uso (ARQ-03); as regras ficam em casos-de-uso/demo/.
+// monta o repositório (e, na criação, o mensageiro) e chama um caso de uso (ARQ-03); as regras ficam em casos-de-uso/demo/.
 export const dynamic = "force-dynamic";
 
 const ACOES: AcaoNaSolicitacao[] = ["aceitar", "desistir", "cancelar", "concluir"];
@@ -22,6 +24,15 @@ const texto = (valor: unknown) => (typeof valor === "string" ? valor : null);
 // Erro do repositório vira exceção: o Next registra a mensagem e responde 500.
 function dependencias(): DependenciasDaDemo {
   return { repositorio: criarRepositorioDaDemoSupabase(createAdminClient()), agora: new Date() };
+}
+
+// P-08: o token vem só do ambiente do servidor. Sem ele, o pedido é criado do mesmo jeito:
+// o caso de uso recebe um mensageiro que não envia nada.
+function mensageiroDoAviso(): Mensageiro {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (token) return criarMensageiroTelegram({ token, fetch });
+  console.error("Aviso do Telegram desligado: TELEGRAM_BOT_TOKEN ausente");
+  return { enviarTexto: async () => {} };
 }
 
 export async function GET() {
@@ -42,7 +53,7 @@ export async function POST(request: Request) {
       categoria: texto(corpo.categoria),
       dataEHora: texto(corpo.dataEHora),
     };
-    return responder(await criarPedidoDaDemo(eu, dados, dependencias()));
+    return responder(await criarPedidoDaDemo(eu, dados, { ...dependencias(), mensageiro: mensageiroDoAviso() }));
   }
 
   const acao = ACOES.find((valor) => valor === corpo?.acao);
