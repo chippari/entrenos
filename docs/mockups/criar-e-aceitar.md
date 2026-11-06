@@ -23,6 +23,8 @@
 ### 1. Tela inicial
 ![Tela inicial com o seletor de comunidade, o botão Pedir ajuda e a lista de pedidos dos vizinhos](criar-e-aceitar/01-inicio.png)
 
+A ordem dos cartões nesta tela é ilustrativa: vale a da RF-CS-09 de `docs/specs/ciclo-da-solicitacao.md` (data e hora, a mais próxima primeiro).
+
 ### 2. Pedir ajuda
 ![Formulário de pedido em três blocos: o que você precisa, tipo de ajuda e quando](criar-e-aceitar/02-criar.png)
 
@@ -94,6 +96,7 @@ Exceções sem tela própria. Elas usam a mesma estrutura da tela 8 (ícone, tí
 
 | Exceção | Texto proposto | Botão |
 |---|---|---|
+| UC-02 E1, quem aceita já é o apoiador (RF-CS-44 de `docs/specs/ciclo-da-solicitacao.md`) | "Você já aceitou este pedido." | Ver o pedido |
 | UC-02 E2 (pedido encerrado) | "Este pedido foi encerrado." | Ver outros pedidos |
 | UC-02 E3 (horário passou) | "O horário deste pedido já passou." | Ver outros pedidos |
 | UC-02 E4 (o próprio solicitante) | "Este pedido é seu. Acompanhe em Meus pedidos." | Ir para Meus pedidos |
