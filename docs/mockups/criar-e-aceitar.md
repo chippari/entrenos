@@ -15,7 +15,7 @@
 | 3 | Pedir ajuda com erros | UC-01, E1 e E3 | RNF-US-10 |
 | 4 | Pedido publicado | UC-01, passo 7 | DC-01 (quem recebe o aviso) |
 | 5 | Detalhe do pedido | UC-02, passos 2 e 3 | DC-08 (sem nome, unidade nem telefone antes do aceite) |
-| 6 | Confirmar o aceite | UC-02, passos 4 e 5; A3 (Voltar) | RF-US-01, RF-US-02 |
+| 6 | Confirmar o aceite | UC-02, passos 4 e 5; A3 (Voltar) | RF-US-01, RF-US-02; DC-09 e DC-10 (o contato do apoiador vai para quem pediu, enquanto o pedido estiver aceito) |
 | 7 | Pedido aceito | UC-02, passos 6 a 8 | P-04 e DC-08 (nome, unidade e telefone para o apoiador) |
 | 8 | Este pedido já foi aceito | UC-02, E1 | P-01 |
 | 9 | Tema escuro | As telas 1 a 8 | RNF-US-03, RNF-US-04 (V2 da identidade visual) |
@@ -86,7 +86,7 @@ Os casos de uso deixaram os textos para os mockups. Estes são os textos aprovad
 | Tela 3, UC-01 E3 | "Essa data e esse horário já passaram. Escolha um momento a partir de agora." |
 | Tela 4 | "Pedido publicado" · "Ele já aparece para os vizinhos. Quem oferece essa ajuda e está disponível no horário recebe um aviso." |
 | Tela 5, aviso | "O nome, a unidade e o telefone de quem pediu aparecem depois que você aceitar." |
-| Tela 6 | "Aceitar este pedido?" · "Ao confirmar" · "Você passa a ver o nome, a unidade e o telefone de quem pediu." · "Quem pediu recebe um aviso de que você aceitou." |
+| Tela 6 | "Aceitar este pedido?" · "Ao confirmar" · "Você passa a ver o nome, a unidade e o telefone de quem pediu." · "Quem pediu passa a ver o seu nome, unidade e telefone." · "Os contatos ficam visíveis só enquanto o pedido estiver aceito." · "Quem pediu recebe um aviso de que você aceitou." |
 | Tela 7 | "Você aceitou o pedido" · "Quem pediu já foi avisado." |
 | Tela 8, UC-02 E1 | "Este pedido já foi aceito" · "Outro vizinho aceitou antes de você. Nada mudou para você." |
 

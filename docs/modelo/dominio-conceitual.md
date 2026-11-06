@@ -111,8 +111,9 @@ Regras que o diagrama sozinho não mostra. Cada uma vai virar cláusula (RB) nas
 | RC-07 | Toda denúncia tem **exatamente um** alvo: um usuário **ou** uma solicitação. | RF16 |
 | RC-08 | Solicitação do tipo Olhar Amigo exige Conta do Telegram do solicitante e do apoiador. | MD-04, ADR-20 |
 | RC-09 | Quem tem Conta do Telegram recebe os avisos pelo Telegram. Quem não tem e aceita avisos por e-mail recebe por e-mail. Quem não tem nenhum dos dois não recebe aviso e acompanha pelo webapp. | MD-04, RF07, RF24 |
-| RC-10 | Nome, unidade e telefone do solicitante só são visíveis ao apoiador que aceitou e nunca aparecem em listagens nem em avisos. | P-04; nome: DC-08 (ADR-34) |
+| RC-10 | Nome, unidade e telefone do solicitante só são visíveis ao apoiador que aceitou, enquanto a solicitação está Aceita, e nunca aparecem em listagens nem em avisos. | P-04; nome: DC-08 (ADR-34); prazo: DC-10 |
 | RC-11 | Não existe avaliação entre moradores. O único registro sobre a conduta de alguém é a denúncia. | D-01, ADR-13 |
+| RC-12 | Nome, unidade e telefone do apoiador só são visíveis ao solicitante daquela solicitação, enquanto ela está Aceita, e nunca aparecem em listagens. | DC-09, DC-10 |
 
 ---
 
@@ -221,7 +222,7 @@ classDiagram
   TipoDeAjudaOferecido ..> Categoria
 
   note for Denuncia "RC-07: exatamente um alvo (Usuario ou Solicitacao)"
-  note for Solicitacao "RC-01 a RC-03, RC-08 e RC-10 na seção 6"
+  note for Solicitacao "RC-01 a RC-03, RC-08, RC-10 e RC-12 na seção 6"
 ```
 
 ---
