@@ -1,6 +1,8 @@
 // Telas da demonstração, seguindo docs/mockups/ (criar-e-aceitar, meus-pedidos e eu-ajudo).
+import Link from "next/link";
 import { useState } from "react";
 import {
+  ArrowLeft,
   Bell,
   Check,
   CircleAlert,
@@ -52,25 +54,10 @@ const MOTIVOS: Record<string, string> = {
 };
 const ALGO_DEU_ERRADO = "Algo deu errado. Tente de novo.";
 
-// Tela de boas-vindas (sem sessão): sem mockup.
+// Tela de login (sem sessão): sem mockup. O erro fica em texto, junto do campo (RNF-US-10, RU-03).
+// A apresentação do projeto fica na página inicial (/).
 
-export function BoasVindas({ aoEntrar }: { aoEntrar: () => void }) {
-  return (
-    <div className="tela centro">
-      <h1 className="titulo-tela marca">EntreNós</h1>
-      <p className="apoio">Pequenas ajudas entre vizinhos da mesma comunidade</p>
-      <div className="rodape">
-        <button type="button" className="botao botao-principal" onClick={aoEntrar}>
-          Entrar
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// Tela de login: sem mockup. O erro fica em texto, junto do campo (RNF-US-10, RU-03).
-
-export function Login({ aoEntrar, aoVoltar }: { aoEntrar: (morador: Morador) => void; aoVoltar: () => void }) {
+export function Login({ aoEntrar }: { aoEntrar: (morador: Morador) => void }) {
   const [erros, setErros] = useState<{ email?: string; senha?: string }>({});
   const [aviso, setAviso] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
@@ -112,10 +99,13 @@ export function Login({ aoEntrar, aoVoltar }: { aoEntrar: (morador: Morador) => 
 
   return (
     <form className="tela" onSubmit={enviar} noValidate>
-      <header className="pessoa">
-        <BotaoVoltar aoVoltar={aoVoltar} />
-        <h1 className="titulo-secao">Entrar</h1>
-      </header>
+      <p>
+        <Link href="/" className="link">
+          <ArrowLeft size={20} aria-hidden />
+          Voltar ao início
+        </Link>
+      </p>
+      <h1 className="titulo-tela">Entrar</h1>
 
       <section className="cartao">
         <label className="campo">

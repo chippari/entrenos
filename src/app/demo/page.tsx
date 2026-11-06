@@ -6,7 +6,6 @@ import { useCallback, useEffect, useState } from "react";
 import type { Morador } from "@/portas/repositorio-da-demo";
 import { BarraDeNavegacao, type Aba, type Acao, type Pedido } from "./pecas";
 import {
-  BoasVindas,
   Confirmar,
   ConfirmarLimpeza,
   Detalhe,
@@ -43,7 +42,6 @@ export default function PaginaDaDemo() {
 function Demo() {
   // undefined = ainda conferindo a sessão; null = sem sessão.
   const [morador, setMorador] = useState<Morador | null | undefined>(undefined);
-  const [noLogin, setNoLogin] = useState(false);
 
   // A sessão fica num cookie que só o servidor lê: quem diz se ela existe é a API.
   useEffect(() => {
@@ -59,25 +57,17 @@ function Demo() {
     };
   }, []);
 
-  const voltarAsBoasVindas = useCallback(() => {
-    setNoLogin(false);
-    setMorador(null);
-  }, []);
+  const voltarAoLogin = useCallback(() => setMorador(null), []);
 
   async function sair() {
     await fetch("/api/demo/sair", { method: "POST" }).catch(() => null);
-    voltarAsBoasVindas();
+    voltarAoLogin();
   }
 
   if (morador === undefined) return <p className="tela apoio">Carregando…</p>;
-  if (morador === null) {
-    return noLogin ? (
-      <Login aoEntrar={setMorador} aoVoltar={() => setNoLogin(false)} />
-    ) : (
-      <BoasVindas aoEntrar={() => setNoLogin(true)} />
-    );
-  }
-  return <Sessao key={morador.id} morador={morador} aoSair={sair} aoPerderSessao={voltarAsBoasVindas} />;
+  // Sem sessão, a demonstração abre direto no login; a apresentação fica na página inicial (/).
+  if (morador === null) return <Login aoEntrar={setMorador} />;
+  return <Sessao key={morador.id} morador={morador} aoSair={sair} aoPerderSessao={voltarAoLogin} />;
 }
 
 function Sessao({
@@ -101,7 +91,7 @@ function Sessao({
     try {
       const resposta = await fetch("/api/demo", { cache: "no-store" });
       if (resposta.ok) setPedidos(((await resposta.json()) as { pedidos: Pedido[] }).pedidos);
-      // Sessão encerrada (401) ou cadastro removido (403): volta para as boas-vindas.
+      // Sessão encerrada (401) ou cadastro removido (403): volta para o login.
       else if (resposta.status === 401 || resposta.status === 403) aoPerderSessao();
     } catch {
       // Sem rede por um instante: a próxima volta tenta de novo.
