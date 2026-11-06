@@ -110,6 +110,30 @@ describe("validarNovaSolicitacao", () => {
       // ASSERT
       expect(resultado).toEqual({ ok: false, erros: [{ campo: "dataEHora", problema: "vazio" }] });
     });
+
+    // Atende RF-CS-03, DEF-CS-04
+    it("deve informar o título vazio quando o título está ausente", () => {
+      // ARRANGE
+      const dados = { ...VALIDOS, titulo: undefined };
+
+      // ACT
+      const resultado = validarNovaSolicitacao(dados, AGORA);
+
+      // ASSERT
+      expect(resultado).toEqual({ ok: false, erros: [{ campo: "titulo", problema: "vazio" }] });
+    });
+
+    // Atende RF-CS-03, DEF-CS-04
+    it("deve informar a descrição vazia quando a descrição é null", () => {
+      // ARRANGE
+      const dados = { ...VALIDOS, descricao: null };
+
+      // ACT
+      const resultado = validarNovaSolicitacao(dados, AGORA);
+
+      // ASSERT
+      expect(resultado).toEqual({ ok: false, erros: [{ campo: "descricao", problema: "vazio" }] });
+    });
   });
 
   describe("tamanho dos textos", () => {
