@@ -1,10 +1,8 @@
 // Telas da demonstração, seguindo docs/mockups/ (criar-e-aceitar, meus-pedidos e eu-ajudo).
-import Link from "next/link";
 import { useState } from "react";
 import {
   Bell,
   Check,
-  ChevronRight,
   CircleAlert,
   CircleCheck,
   CircleX,
@@ -25,13 +23,13 @@ import {
 } from "lucide-react";
 import { lerDataEHoraLocal } from "@/dominio/solicitacao/horario";
 import { CATEGORIAS, type ErroDeCampo } from "@/dominio/solicitacao/validacao";
+import type { Morador } from "@/portas/repositorio-da-demo";
 import {
   Aviso,
   BotaoVoltar,
   CartaoDoContato,
   CartaoDoPedido,
   IconeDaCategoria,
-  MORADORES,
   Selo,
   TIPOS_DE_AJUDA,
   dataLonga,
@@ -54,58 +52,129 @@ const MOTIVOS: Record<string, string> = {
 };
 const ALGO_DEU_ERRADO = "Algo deu errado. Tente de novo.";
 
-// Tela de escolha do morador (sem ?eu na URL).
+// Tela de boas-vindas (sem sessão): sem mockup.
 
-export function Escolha() {
+export function BoasVindas({ aoEntrar }: { aoEntrar: () => void }) {
   return (
-    <div className="tela">
-      <header>
-        <h1 className="titulo-tela marca">EntreNós</h1>
-        <p className="apoio">Rede de pequenas ajudas entre vizinhos</p>
-      </header>
-      <h2 className="titulo-secao">Quem é você neste celular?</h2>
-      <div className="lista">
-        {Object.entries(MORADORES).map(([id, morador]) => (
-          <article key={id} className="cartao-pedido">
-            <Link href={`/demo?eu=${id}`} className="cartao-linha">
-              <span className="avatar avatar-cheio">
-                <User size={24} aria-hidden />
-              </span>
-              <span className="cartao-texto">
-                <span className="titulo-cartao">
-                  Sou {morador.artigo} {morador.nome}
-                </span>
-                <span className="apoio">{morador.unidade}</span>
-              </span>
-              <ChevronRight size={22} aria-hidden />
-            </Link>
-          </article>
-        ))}
+    <div className="tela centro">
+      <h1 className="titulo-tela marca">EntreNós</h1>
+      <p className="apoio">Pequenas ajudas entre vizinhos da mesma comunidade</p>
+      <div className="rodape">
+        <button type="button" className="botao botao-principal" onClick={aoEntrar}>
+          Entrar
+        </button>
       </div>
-      <p className="nota">
-        <Info size={20} aria-hidden />
-        Demonstração · dados fictícios
-      </p>
     </div>
+  );
+}
+
+// Tela de login: sem mockup. O erro fica em texto, junto do campo (RNF-US-10, RU-03).
+
+export function Login({ aoEntrar, aoVoltar }: { aoEntrar: (morador: Morador) => void; aoVoltar: () => void }) {
+  const [erros, setErros] = useState<{ email?: string; senha?: string }>({});
+  const [aviso, setAviso] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
+
+  async function enviar(evento: React.FormEvent<HTMLFormElement>) {
+    evento.preventDefault();
+    const campos = new FormData(evento.currentTarget);
+    const email = String(campos.get("email") ?? "").trim();
+    const senha = String(campos.get("senha") ?? "");
+    setAviso(null);
+    if (!email || !senha) {
+      setErros({ email: email ? undefined : "Preencha o e-mail.", senha: senha ? undefined : "Preencha a senha." });
+      return;
+    }
+    setEnviando(true);
+    try {
+      const resposta = await fetch("/api/demo/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, senha }),
+      });
+      if (resposta.ok) {
+        aoEntrar(((await resposta.json()) as { morador: Morador }).morador);
+        return;
+      }
+      const { motivo } = (await resposta.json().catch(() => ({}))) as { motivo?: string };
+      if (motivo === "credenciais_invalidas") setErros({ senha: "E-mail ou senha incorretos." });
+      else if (motivo === "sem_cadastro") setErros({ email: "Esta conta não tem cadastro na demonstração." });
+      else {
+        setErros({});
+        setAviso(ALGO_DEU_ERRADO);
+      }
+    } catch {
+      setErros({});
+      setAviso(MOTIVOS.sem_conexao);
+    }
+    setEnviando(false);
+  }
+
+  return (
+    <form className="tela" onSubmit={enviar} noValidate>
+      <header className="pessoa">
+        <BotaoVoltar aoVoltar={aoVoltar} />
+        <h1 className="titulo-secao">Entrar</h1>
+      </header>
+
+      <section className="cartao">
+        <label className="campo">
+          E-mail
+          <input
+            name="email"
+            type="email"
+            autoComplete="username"
+            className="entrada"
+            aria-invalid={erros.email ? true : undefined}
+            aria-describedby={erros.email ? "erro-email" : undefined}
+          />
+          <MensagemDeErro id="erro-email" texto={erros.email} />
+        </label>
+        <label className="campo">
+          Senha
+          <input
+            name="senha"
+            type="password"
+            autoComplete="current-password"
+            className="entrada"
+            aria-invalid={erros.senha ? true : undefined}
+            aria-describedby={erros.senha ? "erro-senha" : undefined}
+          />
+          <MensagemDeErro id="erro-senha" texto={erros.senha} />
+        </label>
+      </section>
+
+      {aviso && (
+        <p role="alert" className="linha">
+          <Info size={22} aria-hidden />
+          {aviso}
+        </p>
+      )}
+
+      <div className="rodape">
+        <button type="submit" className="botao botao-principal" disabled={enviando}>
+          {enviando ? "Entrando…" : "Entrar"}
+        </button>
+      </div>
+    </form>
   );
 }
 
 // Tela 1 de criar-e-aceitar: início.
 
 export function Inicio({
-  eu,
+  morador,
   pedidos,
   agora,
   aoPedirAjuda,
   aoAbrir,
 }: {
-  eu: string;
+  morador: Morador;
   pedidos: Pedido[] | null;
   agora: Date;
   aoPedirAjuda: () => void;
   aoAbrir: (id: string) => void;
 }) {
-  const morador = MORADORES[eu];
   const [filtro, setFiltro] = useState<string | null>(null);
   // DT-08: o próprio pedido não aparece aqui. DC-08: a lista não diz quem pediu.
   const abertos = (pedidos ?? []).filter((pedido) => !pedido.ehMeu && pedido.status === "aberta");
@@ -177,6 +246,8 @@ export function Inicio({
 
 type ErrosDoFormulario = Partial<Record<ErroDeCampo["campo"], string>>;
 
+const TOQUE_PARA_ESCOLHER = "Toque para escolher";
+
 const NOMES_DOS_CAMPOS: Record<ErroDeCampo["campo"], string> = {
   titulo: "o título",
   descricao: "a descrição",
@@ -206,17 +277,18 @@ function MensagemDeErro({ id, texto }: { id: string; texto?: string }) {
 }
 
 export function PedirAjuda({
-  eu,
   aoVoltar,
   aoPublicar,
 }: {
-  eu: string;
   aoVoltar: () => void;
   aoPublicar: (resumo: ResumoDoPedido) => void;
 }) {
   const [erros, setErros] = useState<ErrosDoFormulario>({});
   const [aviso, setAviso] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
+  // No Safari do iPhone, a data e o horário vazios aparecem em branco: o texto de apoio diz o que fazer.
+  const [temData, setTemData] = useState(false);
+  const [temHorario, setTemHorario] = useState(false);
 
   async function enviar(evento: React.FormEvent<HTMLFormElement>) {
     evento.preventDefault();
@@ -230,7 +302,6 @@ export function PedirAjuda({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          eu,
           acao: "criar",
           titulo: valor("titulo"),
           descricao: valor("descricao"),
@@ -328,7 +399,9 @@ export function PedirAjuda({
               className="entrada"
               aria-invalid={erros.dataEHora ? true : undefined}
               aria-describedby={erros.dataEHora ? "erro-quando" : undefined}
+              onChange={(evento) => setTemData(evento.target.value !== "")}
             />
+            {!temData && <span className="apoio">{TOQUE_PARA_ESCOLHER}</span>}
           </label>
           <label className="campo">
             Horário
@@ -338,7 +411,9 @@ export function PedirAjuda({
               className="entrada"
               aria-invalid={erros.dataEHora ? true : undefined}
               aria-describedby={erros.dataEHora ? "erro-quando" : undefined}
+              onChange={(evento) => setTemHorario(evento.target.value !== "")}
             />
+            {!temHorario && <span className="apoio">{TOQUE_PARA_ESCOLHER}</span>}
           </label>
         </div>
         <MensagemDeErro id="erro-quando" texto={erros.dataEHora} />
@@ -1023,8 +1098,15 @@ export function MeusPedidos({
 
 // Perfil: sem mockup (DT-05). Na demonstração, mostra o morador e as ações da própria demonstração.
 
-export function Perfil({ eu, aoLimpar }: { eu: string; aoLimpar: () => void }) {
-  const morador = MORADORES[eu];
+export function Perfil({
+  morador,
+  aoSair,
+  aoLimpar,
+}: {
+  morador: Morador;
+  aoSair: () => void;
+  aoLimpar: () => void;
+}) {
   return (
     <div className="tela tela-com-barra">
       <h1 className="titulo-tela">Perfil</h1>
@@ -1036,16 +1118,17 @@ export function Perfil({ eu, aoLimpar }: { eu: string; aoLimpar: () => void }) {
           <div>
             <p className="nome">{morador.nome}</p>
             <p className="apoio">{morador.unidade}</p>
+            <p className="apoio">{morador.telefone}</p>
           </div>
         </div>
       </section>
       <p className="nota">
         <Info size={20} aria-hidden />
-        Demonstração · dados fictícios
+        Demonstração · dados de teste do grupo
       </p>
-      <Link href="/demo" className="botao botao-secundario">
-        Trocar de morador
-      </Link>
+      <button type="button" className="botao botao-secundario" onClick={aoSair}>
+        Sair
+      </button>
       <button type="button" className="botao botao-secundario" onClick={aoLimpar}>
         Limpar demonstração
       </button>

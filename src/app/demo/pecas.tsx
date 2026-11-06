@@ -46,11 +46,6 @@ export type Acao = "aceitar" | "desistir" | "cancelar" | "concluir";
 
 export type Aba = "inicio" | "meus" | "perfil";
 
-export const MORADORES: Record<string, { artigo: string; nome: string; unidade: string }> = {
-  ana: { artigo: "a", nome: "Ana", unidade: "Apto 12" },
-  bruno: { artigo: "o", nome: "Bruno", unidade: "Apto 34" },
-};
-
 // Rótulos e ícones das sete categorias, como nos mockups (D-03).
 export const TIPOS_DE_AJUDA: Record<Categoria, { rotulo: string; Icone: LucideIcon }> = {
   receber_encomendas: { rotulo: "Receber encomendas", Icone: Package },
