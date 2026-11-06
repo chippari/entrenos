@@ -3,7 +3,7 @@
 | Campo | Valor |
 |---|---|
 | Nível | **Conceitual** (aula 4): só conceitos e relacionamentos. Sem identificadores técnicos, tipos de dado ou nomes de tabela. Isso fica no nível físico (as migrations). |
-| Data | 05/11/2026 |
+| Data | 05/11/2026 (RC-10 e RC-12 atualizadas em 06/11/2026, na Issue #40) |
 | Situação | Primeira versão. Base para os casos de uso, as specs dos RFs e as próximas migrations. |
 | Fontes | `docs/constitution.md` (P-01 a P-08) · requisitos RF01 a RF24 e RNF01 a RNF08 (RF24, aviso por e-mail, entrou junto com este modelo) · decisões ADR-08 a ADR-14, ADR-20 |
 | Fora deste modelo | Tabelas técnicas de infraestrutura (a do cron anti-pausa e a da idempotência do webhook): não são conceitos do domínio. |
@@ -111,8 +111,9 @@ Regras que o diagrama sozinho não mostra. Cada uma vai virar cláusula (RB) nas
 | RC-07 | Toda denúncia tem **exatamente um** alvo: um usuário **ou** uma solicitação. | RF16 |
 | RC-08 | Solicitação do tipo Olhar Amigo exige Conta do Telegram do solicitante e do apoiador. | MD-04, ADR-20 |
 | RC-09 | Quem tem Conta do Telegram recebe os avisos pelo Telegram. Quem não tem e aceita avisos por e-mail recebe por e-mail. Quem não tem nenhum dos dois não recebe aviso e acompanha pelo webapp. | MD-04, RF07, RF24 |
-| RC-10 | Nome, unidade e telefone do solicitante só são visíveis ao apoiador que aceitou e nunca aparecem em listagens nem em avisos. | P-04; nome: DC-08 (ADR-34) |
+| RC-10 | Nome, unidade e telefone do solicitante só são visíveis ao apoiador que aceitou, enquanto a solicitação está Aceita, e nunca aparecem em listagens nem em avisos. | P-04; nome: DC-08 (ADR-34); prazo: DC-10 |
 | RC-11 | Não existe avaliação entre moradores. O único registro sobre a conduta de alguém é a denúncia. | D-01, ADR-13 |
+| RC-12 | Nome, unidade e telefone do apoiador só são visíveis ao solicitante daquela solicitação, enquanto ela está Aceita, e nunca aparecem em listagens nem em avisos a outros moradores. | DC-09, DC-10 |
 
 ---
 
@@ -221,7 +222,7 @@ classDiagram
   TipoDeAjudaOferecido ..> Categoria
 
   note for Denuncia "RC-07: exatamente um alvo (Usuario ou Solicitacao)"
-  note for Solicitacao "RC-01 a RC-03, RC-08 e RC-10 na seção 6"
+  note for Solicitacao "RC-01 a RC-03, RC-08, RC-10 e RC-12 na seção 6"
 ```
 
 ---

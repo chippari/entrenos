@@ -1,7 +1,7 @@
 # Spec: usabilidade e acessibilidade (RNF01 e RNF02)
 
 - Origem: decomposição do RNF01 ("criar/aceitar em até 3 toques") e do RNF02 ("leitor de tela, aumento de fonte, contraste") em critérios verificáveis, antes dos mockups (aula 3, A3 s.17 e s.25). Issue #32.
-- Decisões relacionadas: D1 a D7 da Issue #32. Casos de uso: UC-01 e UC-02 (`docs/casos-de-uso/ciclo-da-solicitacao.md`). Constituição: P-01, P-02, P-04 e P-05.
+- Decisões relacionadas: D1 a D7 da Issue #32. Casos de uso: UC-01 e UC-02 (`docs/casos-de-uso/ciclo-da-solicitacao.md`), com DC-09 e DC-10 (Issue #40). Constituição: P-01, P-02, P-04 e P-05.
 - Escopo: todas as telas do webapp e todas as mensagens do bot.
 - Fora do escopo: conformidade completa com a WCAG 2.2 nível AA; a acessibilidade do próprio aplicativo do Telegram; testes automáticos de acessibilidade; a identidade visual (paleta, fonte e ícones), que vem em outra Issue e precisa cumprir o RNF-US-03 e o RNF-US-04.
 
@@ -20,8 +20,8 @@
 
 | ID | Padrão EARS | Cláusula |
 |---|---|---|
-| RF-US-01 | Event-driven | WHEN um morador toca em Aceitar numa solicitação, no webapp ou no bot, THE SYSTEM SHALL pedir uma confirmação antes de aceitar AND dizer que, ao confirmar, ele passa a ver o nome, a unidade e o telefone do solicitante. |
-| RF-US-02 | Unwanted behavior | IF o morador não confirma (no webapp, toca em Voltar ou sai da tela; no bot, toca em Voltar ou não toca em Confirmar), THEN THE SYSTEM SHALL manter a solicitação como estava AND não revelar o nome, a unidade nem o telefone do solicitante. |
+| RF-US-01 | Event-driven | WHEN um morador toca em Aceitar numa solicitação, no webapp ou no bot, THE SYSTEM SHALL pedir uma confirmação antes de aceitar AND dizer que, ao confirmar, ele passa a ver o nome, a unidade e o telefone do solicitante AND que o solicitante passa a ver o nome, a unidade e o telefone dele. |
+| RF-US-02 | Unwanted behavior | IF o morador não confirma (no webapp, toca em Voltar ou sai da tela; no bot, toca em Voltar ou não toca em Confirmar), THEN THE SYSTEM SHALL manter a solicitação como estava AND não revelar o nome, a unidade nem o telefone do solicitante ao morador AND não revelar os do morador ao solicitante. |
 | RNF-US-01 | Ubiquitous | THE SYSTEM SHALL permitir que um morador com vínculo ativo publique uma solicitação no webapp com no máximo 3 toques, contados como em DEF-US-01 a DEF-US-04. |
 | RNF-US-02 | Ubiquitous | THE SYSTEM SHALL permitir que um morador com vínculo ativo aceite uma solicitação, no webapp ou no bot, com no máximo 3 toques, contados como em DEF-US-01 a DEF-US-04, incluindo o toque de confirmação do RF-US-01. |
 | RNF-US-03 | Ubiquitous | THE SYSTEM SHALL exibir todo texto do webapp com contraste de pelo menos 4,5:1 contra o fundo, ou de pelo menos 3:1 para texto grande (DEF-US-05), no tema claro e no tema escuro, exceto texto de elemento desabilitado, texto só decorativo e texto que faz parte de um logotipo. |
@@ -45,7 +45,7 @@
 
 | Cláusula | Onde se confere | Como |
 |---|---|---|
-| RF-US-01, RF-US-02 | Mockup e, depois, teste da tela e do bot | Fluxo de aceitar mostra a confirmação com o aviso; o caminho Voltar não muda nada |
+| RF-US-01, RF-US-02 | Mockup e, depois, teste da tela e do bot | Fluxo de aceitar mostra a confirmação com o aviso nos dois sentidos (quem aceita passa a ver o contato de quem pediu, e quem pediu passa a ver o de quem aceita); o caminho Voltar não muda nada |
 | RNF-US-01, RNF-US-02 | Mockup | Contar os toques em cada fluxo seguindo DEF-US-01 a DEF-US-04 e anotar o número no próprio mockup |
 | RNF-US-03, RNF-US-04 | Mockup e tela | Contraste calculado para cada par de cores da paleta, nos dois temas, numa tabela da identidade visual |
 | RNF-US-05 | Tela | Zoom do navegador em 200% e percorrer cada tela |
@@ -59,7 +59,7 @@
 ## Observações
 
 - **Consequência para os mockups (RNF-US-02 com o RF-US-01):** com a confirmação, aceitar no webapp já gasta 3 toques a partir da lista (escolher, Aceitar, Confirmar). Então a tela inicial precisa já mostrar a lista de solicitações abertas, ou o botão Aceitar precisa estar no próprio item da lista. Se abrir a lista custar um toque, o RNF-US-02 falha. No bot, aceitar gasta 2 toques (Aceitar e Confirmar).
-- **Relação com a constituição:** a confirmação não é um status e não registra Transição da solicitação; a máquina de estados continua a mesma (P-02). A aceitação só acontece no toque em Confirmar, e é nesse momento que vale a regra de aceitação única (P-01) e que o bot confere se o chat é de um usuário identificado com vínculo ativo (P-05). A confirmação existe para proteger o nome, a unidade e o telefone do solicitante de uma aceitação por engano (P-04 e, para o nome, DC-08).
+- **Relação com a constituição:** a confirmação não é um status e não registra Transição da solicitação; a máquina de estados continua a mesma (P-02). A aceitação só acontece no toque em Confirmar, e é nesse momento que vale a regra de aceitação única (P-01) e que o bot confere se o chat é de um usuário identificado com vínculo ativo (P-05). A confirmação existe para proteger o nome, a unidade e o telefone do solicitante de uma aceitação por engano (P-04 e, para o nome, DC-08). Ela também avisa o apoiador de que o nome, a unidade e o telefone dele vão para o solicitante (DC-09).
 - Os critérios RNF-US-03 a RNF-US-06 e RNF-US-08 a RNF-US-11 são um recorte do nível AA da WCAG 2.2, a versão em vigor do W3C. O RNF-US-07 (área de toque de 44 × 44 px) é do nível AAA (critério 2.5.5); a escolha do AAA nesse ponto vem do público, que inclui pessoas idosas. Este arquivo não declara conformidade completa com a WCAG.
 - Origem de cada critério: RNF-US-01 e RNF-US-02 vêm do RNF01; RNF-US-03 a RNF-US-12 vêm do RNF02. Critérios da WCAG 2.2: 1.4.3 (RNF-US-03), 1.4.11 (RNF-US-04), 1.4.4 (RNF-US-05), 1.4.10 (RNF-US-06), 2.5.5 (RNF-US-07), 1.3.1 e 3.3.2 (RNF-US-08), 4.1.2 (RNF-US-09), 1.4.1, 3.3.1 e 3.3.3 (RNF-US-10), 2.1.1, 2.4.3 e 2.4.7 (RNF-US-11).
 - O RF-US-01 e o RF-US-02 nasceram da decomposição do RNF01 (decisão D3). Por descreverem comportamento, ficam como RF (A3 s.20), não como RNF.
